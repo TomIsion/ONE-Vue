@@ -11,3 +11,11 @@ router.push({ name: 'user', params: { userId: 123 }})
 ```
 
 > 如何改变 document.title?
+
+> 动画消失问题 - Nav 组件
+
+> <transition></transition> 组件的实现
+
+> 组件的 name 属性有什么用处？
+
+允许组件模板递归的调用自身
