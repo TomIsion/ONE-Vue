@@ -6,7 +6,7 @@ export function getOneListByPageIndex(index) {
   return axios.get(
     oneListUrl,
     {
-      params: { 
+      params: {
         type: 'one',
         index,
       },

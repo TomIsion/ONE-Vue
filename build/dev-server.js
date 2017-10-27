@@ -66,7 +66,7 @@ apiRoutes.get('/api/list', function(request, response) {
       maxConnections : 10,
       callback: function (error, res, done) {
         if (error) {
-          console.log(error);
+          console.log(error)
         } else {
           if (!_token) _token = /One.token\s=\s\'(\w+)\'/.exec(res.body)[1]
           if (!PHPSESSID) PHPSESSID = getCookie(res.headers['set-cookie'][0], 'PHPSESSID')
