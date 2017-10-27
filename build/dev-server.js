@@ -1,5 +1,7 @@
 'use strict'
 require('./check-versions')()
+const axios = require('axios')
+const crawler = require('crawler')
 
 const config = require('../config')
 if (!process.env.NODE_ENV) {
@@ -23,6 +25,79 @@ const proxyTable = config.dev.proxyTable
 
 const app = express()
 const compiler = webpack(webpackConfig)
+
+const apiRoutes = express.Router()
+
+const getCookie = (cookie, name) => cookie.replace(/\s/, '').split(';')
+  .reduce((pre, cur) => {
+    pre[cur.split('=')[0]] = cur.split('=')[1]
+    return pre
+  }, {})[name]
+
+let _token = undefined
+let PHPSESSID = undefined
+
+apiRoutes.get('/api/list', function(request, response) {
+  const path = request.path
+  const params = request.query
+  const type = params.type
+  const index = params.index
+
+  if (_token && PHPSESSID) {
+    axios.get(
+      `http://m.wufazhuce.com/${type}/ajaxlist/${index}`,
+      {
+        params: {
+          _token,
+        },
+        headers: {
+          Host: 'm.wufazhuce.com',
+          Referer: 'http://m.wufazhuce.com',
+          Cookie: `PHPSESSID=${PHPSESSID}`,
+        },
+      }
+    )
+    .then(res => {
+      response.json(res.data) 
+    })
+    .catch(err => console.log(err))
+  } else {
+    var c = new crawler({
+      maxConnections : 10,
+      callback: function (error, res, done) {
+        if (error) {
+          console.log(error);
+        } else {
+          if (!_token) _token = /One.token\s=\s\'(\w+)\'/.exec(res.body)[1]
+          if (!PHPSESSID) PHPSESSID = getCookie(res.headers['set-cookie'][0], 'PHPSESSID')
+  
+          axios.get(
+            `http://m.wufazhuce.com/${type}/ajaxlist/${index}`,
+            {
+              params: {
+                _token,
+              },
+              headers: {
+                Host: 'm.wufazhuce.com',
+                Referer: 'http://m.wufazhuce.com',
+                Cookie: `PHPSESSID=${PHPSESSID}`,
+              },
+            }
+          )
+          .then(res => {
+            response.json(res.data) 
+          })
+          .catch(err => console.log(err))
+        }
+        done()
+      }
+    })
+    
+    c.queue('http://m.wufazhuce.com/one') 
+  }
+})
+
+app.use(apiRoutes)
 
 const devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
