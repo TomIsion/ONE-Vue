@@ -4,7 +4,7 @@
       <li v-for="item in list" :key="item.id" @click="handleClickItem(item.id)">
         <p class="time">{{item.date}}</p>
         <p class="volume">{{item.title}}</p>
-        <img :src="item.img_url" :alt="item.picture_author">
+        <img v-lazy="item.img_url" :alt="item.picture_author">
         <p class="author" v-html="item.picture_author"></p>
         <h4 v-html="item.content"></h4>
         <p class="source" v-html="item.text_authors"></p>
