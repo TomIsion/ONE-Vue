@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <ul ref="list">
-      <li v-for="item in list" :key="item.id">
+      <li v-for="item in list" :key="item.id" @click="handleClickItem(item.id)">
         <p class="time">{{item.date}}</p>
         <p class="volume">{{item.title}}</p>
         <img :src="item.img_url" :alt="item.picture_author">
@@ -16,55 +16,13 @@
 
 <script>
 import { getOneListByPageIndex } from 'api/one/one'
-import Loading from 'base/loading/loading'
+import mixinScrollLoad from 'base/scroll-load/scroll-load'
 
 export default {
-  data() {
-    return {
-      list: [],
-      singleInAjax: true,
-    }
-  },
-  mounted() {
-    this._getOneList()
-    
-    window.addEventListener('scroll', this._bindScroll, {
-      captrue: true,
-    })
-  },
-  beforeDestroy() {
-    this._removeHandleScroll()
-  },
+  mixins: [mixinScrollLoad],
+  name: 'one',
   methods: {
-    _bindScroll() {
-      const elementList = this.$refs.list
-      const windowHeight = window.innerHeight
-      const windowScrollHeight = window.scrollY
-      const listHeight = elementList.clientHeight + 40
-
-      if (windowHeight + windowScrollHeight + windowHeight / 2 > listHeight && !this.singleInAjax) {
-        this._getOneList(this.list[this.list.length - 1].id)
-      }
-    },
-    _removeHandleScroll() {
-      window.removeEventListener('scroll', this._bindScroll, {
-        captrue: true,
-      })
-    },
-    _getOneList(index = 0) {
-      this.singleInAjax = true
-
-      getOneListByPageIndex(index)
-        .then(res => {
-          if (res.res === 0) {
-            this.list.push(...res.data)
-            this.singleInAjax = false
-          }
-        })
-    }
-  },
-  components: {
-    Loading,
+    _getListAjax: getOneListByPageIndex,
   },
 }
 </script>
@@ -113,4 +71,11 @@ export default {
       .source
         margin-top 0
         margin 0 20px
+
+  .slide-enter-active, .slide-leave-active
+    transition all .3s ease
+
+  .slide-enter, .slide-leave-to
+    transform translate3d(0, 100%, 0)
+    opacity 0
 </style>

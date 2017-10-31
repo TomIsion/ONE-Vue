@@ -1,4 +1,6 @@
 $defaultIndex = 1
-$loadingIndex = 101
-$navIndex = 99
+$detailIndex = 98
+$navIndex = 100
 $searchIndex = 100
+$detailsIndex = 100
+$loadingIndex = 101

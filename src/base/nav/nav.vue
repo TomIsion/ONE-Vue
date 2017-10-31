@@ -1,5 +1,6 @@
 <template>
-  <div class="hover" v-show="singeInnerShow" @click="handleHoverClick">
+  <div class="nav-menu">
+    <div class="hover" v-show="singeInnerShow" @click="handleHoverClick"></div>
     <transition name="wipe">
       <nav v-show="singeInnerShow">
         <ul>
@@ -10,7 +11,7 @@
           >{{item.text}}</li>
         </ul>
       </nav>
-    </transition>  
+    </transition>
   </div>
 </template>
 
@@ -64,6 +65,7 @@ export default {
       this.singeInnerShow = false
     },
     handleNavClick(path) {
+      this.singeInnerShow = false
       this.$router.replace({ path })
     },
   },
@@ -71,21 +73,23 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.hover
-  position fixed
-  top 0
-  left 0
-  bottom 0
-  right 0
+  .hover
+    position fixed
+    top 0
+    left 0
+    bottom 0
+    right 0
 
   nav 
+    position fixed
+    top 0
+    left 0
     width 188px
     height 100%
     box-sizing border-box
     padding-top 30px
     background-color #ffffff
     box-shadow 5px 0 5px rgba(0, 0, 0, .15)
-    transition all ease 200ms
 
     li
       height 52px
@@ -96,11 +100,11 @@ export default {
       text-shadow none
       font-weight light
 
-.wipe-enter-active, .wipe-leave-active
-  transform translate3d(0, 0, 0)
+  .wipe-enter-active, .wipe-leave-active
+    transition all ease 200ms
 
-.wipe-enter, .wipe-leave-to
-  transform translate3d(-100%, 0, 0)
+  .wipe-enter, .wipe-leave-to
+    transform translate3d(-100%, 0, 0)
 </style>
 
 

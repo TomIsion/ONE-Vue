@@ -43,25 +43,25 @@ apiRoutes.get('/api/list', function(request, response) {
   const type = params.type
   const index = params.index
 
-  if (_token && PHPSESSID) {
-    axios.get(
-      `http://m.wufazhuce.com/${type}/ajaxlist/${index}`,
-      {
-        params: {
-          _token,
-        },
-        headers: {
-          Host: 'm.wufazhuce.com',
-          Referer: 'http://m.wufazhuce.com',
-          Cookie: `PHPSESSID=${PHPSESSID}`,
-        },
-      }
-    )
-    .then(res => {
-      response.json(res.data) 
-    })
-    .catch(err => console.log(err))
-  } else {
+  // if (_token && PHPSESSID) {
+  //   axios.get(
+  //     `http://m.wufazhuce.com/${type}/ajaxlist/${index}`,
+  //     {
+  //       params: {
+  //         _token,
+  //       },
+  //       headers: {
+  //         Host: 'm.wufazhuce.com',
+  //         Referer: 'http://m.wufazhuce.com',
+  //         Cookie: `PHPSESSID=${PHPSESSID}`,
+  //       },
+  //     }
+  //   )
+  //   .then(res => {
+  //     response.json(res.data) 
+  //   })
+  //   .catch(err => console.log(err))
+  // } else {
     var c = new crawler({
       maxConnections : 10,
       callback: function (error, res, done) {
@@ -94,7 +94,7 @@ apiRoutes.get('/api/list', function(request, response) {
     })
     
     c.queue('http://m.wufazhuce.com/one') 
-  }
+  // }
 })
 
 app.use(apiRoutes)

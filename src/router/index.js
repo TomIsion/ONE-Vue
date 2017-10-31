@@ -25,16 +25,14 @@ export default new Router({
       component: Search,
     },
     {
+      path: '/one/:id',
+      name: 'one-detail',
+      component: OneDetail,
+    },
+    {
       path: '/one',
       name: 'one',
       component: One,
-      children: [
-        {
-          path: ':id',
-          name: 'one-detail',
-          component: OneDetail,
-        }
-      ],
     },
     {
       path: '/article',
