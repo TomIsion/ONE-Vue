@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <ul ref="list">
-      <li v-for="item in list" :key="item.id" @click="handleClickItem(item.id)">
+      <li v-for="item in list" :key="item.item_id" @click="handleClickItem(item.item_id)">
         <p class="type">- 影视 -</p>
         <h2 v-html="item.title"></h2>
         <p class="author" v-html="`文 / ${item.author.user_name}`"></p>
         <div class="pic-placeholder">
           <div>
-            <img :src="item.img_url" alt="">
+            <img v-lazy="item.img_url" :alt="item.subtitle">
           </div>
         </div>
         <dl>

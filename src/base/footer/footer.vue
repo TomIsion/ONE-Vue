@@ -81,7 +81,7 @@ export default {
       justify-content space-between
       color #333333
       font-size 16px
-      background-color #ffffff
+      background-color rgba(255, 255, 255, .9)
       
       span 
         display inline-block
