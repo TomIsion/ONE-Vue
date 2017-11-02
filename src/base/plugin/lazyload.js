@@ -1,6 +1,6 @@
 const lazyLoad = {
   install(Vue, options) {
-    const src = options || 'http://image.wufazhuce.com/list-paceholder.png'
+    const src = (options && options.src) || 'http://image.wufazhuce.com/list-paceholder.png'
     const arr = []
 
     const windowHeight = window.innerHeight
