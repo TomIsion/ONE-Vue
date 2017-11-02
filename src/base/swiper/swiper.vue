@@ -161,16 +161,19 @@ export default {
         background-position center center
         position absolute
         left 0
-        top 0
+        top 100%
 
         &.active
           left 33.33333%
+          top 0
 
         &.before
           left 0
+          top 0
 
         &.after
           left 66.66666%
+          top 0
 </style>
 
 
