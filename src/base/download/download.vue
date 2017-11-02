@@ -1,6 +1,6 @@
 <template>
   <div class="download-container">
-    <img src="../../assets/images/app_download.png" alt="">
+    <img src="../../assets/images/app_download.png" alt="logo">
     <p>下载「一个」APP</p>
   </div>
 </template>
@@ -17,6 +17,6 @@
     height 18px
     line-height 18px
     text-align center
-    margin-top 5px
+    margin-top 12px
 </style>
 

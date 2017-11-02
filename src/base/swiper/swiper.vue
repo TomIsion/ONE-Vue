@@ -15,6 +15,7 @@
       >
       </li>
     </ul>
+    <p class="identify">{{currentIndex + 1}} / {{imgs.length}}</p>
     <p class="title" v-html="title"></p>
   </div>
 </template>
@@ -140,13 +141,20 @@ export default {
     position relative
     overflow hidden
 
-    > p
+    .title
       position absolute
-      bottom 10px
+      bottom 20px
       width 100%
       text-align center
       color #ffffff
       font-size 12px
+
+    .identify
+      position absolute
+      right 5px
+      bottom 5px
+      color #ffffff
+      font-size 10px
 
     .swiper-items-container
       height 100%
@@ -159,6 +167,7 @@ export default {
         background-color #000000
         background-size contain
         background-position center center
+        background-repeat no-repeat
         position absolute
         left 0
         top 100%
