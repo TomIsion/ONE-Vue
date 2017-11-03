@@ -1,56 +1,50 @@
 <template>
   <div class="one-details container">
     <div class="details-container">
-      <div class="scroll-container">
-        <img @load="handleImageLoad" :src="detailInfo.img" alt="">
-        <div class="description clear">
-          <span>{{ detailInfo.volume }}</span>
-          <span v-html="detailInfo.anthor"></span>
-        </div>
-        <div class="time">
-          <p class="day">{{ detailInfo.day }}</p>
-          <p class="month">{{ detailInfo.month }}</p>
-          <div class="sep-line"></div>
-        </div>
-        <div class="text" v-html="detailInfo.text"></div>
-        <download></download>
+      <img :src="detailInfo.img" alt="">
+      <div class="description clear">
+        <span>{{ detailInfo.volume }}</span>
+        <span v-html="detailInfo.anthor"></span>
       </div>
+      <div class="time">
+        <p class="day">{{ detailInfo.day }}</p>
+        <p class="month">{{ detailInfo.month }}</p>
+        <div class="sep-line"></div>
+      </div>
+      <div class="text" v-html="detailInfo.text"></div>
+      <download></download>
     </div>
+    <loading v-show="singleInAjax"></loading>
   </div>
 </template>
 
 <script>
 import Download from 'base/download/download'
+import Loading from 'base/loading/loading'
 
-import IScroll from 'iscroll'
 import { dateFormat } from 'common/js/date'
-import { preventScroll, premitScroll } from 'common/js/switchScroll' 
 import { getOneDetailById } from 'api/one/one'
 
 export default {
   data() {
     return {
       detailInfo: {},
+      singleInAjax: true,
+    }
+  },
+  watch: {
+    $route(newRoute) {
+      this._getOneDetailById(newRoute.params.id)
     }
   },
   mounted() {
-    preventScroll()
     this._getOneDetailById(this.$route.params.id)
   },
-  beforeDestroy() {
-    premitScroll()
-  },
   methods: {
-    handleImageLoad() {
-      if (this.detailInfo.img) {
-        // 初始化 IScroll
-        new IScroll('.details-container', {
-          mouseWheel: true,
-        })
-      }
-    },
     _getOneDetailById(id) {
       const month2Eng = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+      this.singleInAjax = true
 
       getOneDetailById(id)
         .then(res => {
@@ -61,12 +55,13 @@ export default {
               img: data.img_url,
               volume: data.volume,
               anthor: `${data.title} | ${data.pic_info}`,
-              day: dateFormat(data.post_data, 'D'),
-              month: `${month2Eng[dateFormat(data.post_data, 'M')]}. ${dateFormat(data.post_data, 'YYYY')}`,
+              day: dateFormat(data.post_date, 'D'),
+              month: `${month2Eng[dateFormat(data.post_date, 'M')]}. ${dateFormat(data.post_date, 'YYYY')}`,
               text: data.forward,
             }
-          } else {
 
+            this.singleInAjax = false
+          } else {
           }
         })
         .catch(err => console.log(err))
@@ -74,25 +69,15 @@ export default {
   },
   components: {
     Download,
+    Loading,
   },
 }
 </script>
 
 <style lang="stylus" scoped>
-  .one-details
-    position fixed
-    left 0
-    top 0
-    bottom 0
-    right 0
-
   .details-container
-    box-sizing border-box
     background-color #ffffff
-    height 100%
-
-    .scroll-container
-      padding-bottom 150px
+    padding-bottom 100px
 
     img 
       width 100%

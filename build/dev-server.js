@@ -97,6 +97,63 @@ apiRoutes.get('/api/list', function(request, response) {
   // }
 })
 
+apiRoutes.get('/api/footer', function(request, response) {
+  const params = request.query
+  const type = params.type
+  const id = params.id
+
+  var c = new crawler({
+    maxConnections : 10,
+    callback: function (error, res, done) {
+      if (error) {
+        console.log(error)
+      } else {
+        if (type === 'one') {
+          const regPreviousId = /(?:dataSource\.previousPageUrl=["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
+          const regNextId = /(?:dataSource\.nextPageUrl=["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
+          const regBasicInfo = /(?:dataSource\.url=['"]{1})([^'"]*)[\s\S]*(?:dataSource\.title=['"]{1})([^'"]*)[\s\S]*(?:dataSource\.image_url=['"]{1})([^'"]*)/gm
+          const regContent = /(?:dataSource\.content=['"]{1})([^'"]*)/gm
+          const regSummary = /(?:dataSource\.summary=['"]{1})([^'"]*)/gm
+  
+          const objPreviousId = regPreviousId.exec(res.body)
+          const objNextId = regNextId.exec(res.body)
+          const objBasicInfo = regBasicInfo.exec(res.body)
+          const objContent = regContent.exec(res.body)
+          const objSummary = regSummary.exec(res.body)
+  
+          response.json({
+            query: params,
+            previousId: objPreviousId && objPreviousId[1],
+            nextId:  objNextId && objNextId[1],
+            share: {
+              url: objBasicInfo && objBasicInfo[1],
+              title: objBasicInfo && objBasicInfo[2],
+              content: objContent && objContent[1],
+              summary: objSummary && objSummary[1],
+              image: objBasicInfo && objBasicInfo[3],
+            },
+          })
+        } else if (type === 'movie') {
+          const regPreviousId = /(?:dataSource\.previousPageUrl = ["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
+          const regNextId = /(?:dataSource\.nextPageUrl = ["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
+
+          const objPreviousId = regPreviousId.exec(res.body)
+          const objNextId = regNextId.exec(res.body)
+
+          response.json({
+            query: params,
+            previousId: objPreviousId && objPreviousId[1],
+            nextId:  objNextId && objNextId[1],
+          })
+        }
+      }
+      done()
+    }
+  })
+  
+  c.queue(`http://m.wufazhuce.com/${type}/${id}`) 
+})
+
 app.use(apiRoutes)
 
 const devMiddleware = require('webpack-dev-middleware')(compiler, {

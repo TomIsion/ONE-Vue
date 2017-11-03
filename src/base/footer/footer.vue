@@ -1,57 +1,107 @@
 <template>
-  <footer :style="{zIndex: show ? 101 : 99}" @scroll.stop.prevent="handleScroll">
-    <div class="footer-container">
-      <span>上一篇</span>
-      <i class="icon-share" @click="handleShareClick"></i>
-      <span>下一篇</span>
-    </div>
-    <transition name="fade">
-      <div class="hover" v-show="show" @click="handleHoverClick"></div>
-    </transition>
-    <transition name="slide">
-      <div class="share-container" v-show="show">
-        <a target="_blank" :href="weiboUrl">
-          <i class="icon-weibo"></i>
-        </a>
-        <a target="_blank" :href="kongjianUrl">
-          <i class="icon-kongjian"></i>
-        </a>
-        <a target="_blank" :href="qqUrl">
-          <i class="icon-qq"></i>
-        </a>
-        <a>
-          <i class="icon-wechat"></i>
-        </a>
+  <transition name="slide">
+    <footer v-show="slide" :style="{zIndex: show ? 101 : 99}" @scroll.stop.prevent="handleScroll">
+      <div class="footer-container">
+        <span :class="{ darken: previousId === '' }" @click="goBefore">上一篇</span>
+        <i class="icon-share" @click="handleShareClick"></i>
+        <span :class="{ darken: nextId === '' }" @click="goNext">下一篇</span>
       </div>
-    </transition>
-  </footer>
+      <transition name="fade">
+        <div class="hover" v-show="show" @click="handleHoverClick"></div>
+      </transition>
+      <transition name="slide">
+        <div class="share-container" v-show="show">
+          <a target="_blank" :href="weiboUrl">
+            <i class="icon-weibo"></i>
+          </a>
+          <a target="_blank" :href="kongjianUrl">
+            <i class="icon-kongjian"></i>
+          </a>
+          <a target="_blank" :href="qqUrl">
+            <i class="icon-qq"></i>
+          </a>
+          <a>
+            <i class="icon-wechat"></i>
+          </a>
+        </div>
+      </transition>
+    </footer>
+  </transition>
 </template>
 
 <script>
+import { getFooterInfo } from 'api/common/common'
+
 export default {
   data() {
     return {
+      slide: false,
       show: false,
+      previousId: undefined,
+      nextId: undefined,
+      share: {},
     }
   },
-  props: {
-    text: String,
-    title: String,
-    image: String,
-    url: String,
+  watch: {
+    $route(newValue) {
+      const path = newValue.path
+      this._changeFooterByPath(path)
+    }
   },
   computed: {
     weiboUrl() {
-      return `http://service.weibo.com/share/share.php?url=http%3A%2F%2Fweibo.com%2Fp%2F100404157874&title=${this.text}&pic=${this.image}&appkey=1156389752`
+      return `http://service.weibo.com/share/share.php?url=http%3A%2F%2Fweibo.com%2Fp%2F100404157874&title=${window.encodeURI(`${this.share.content || this.share.summary} ${this.share.title}`)}&pic=${this.share.image}&appkey=1156389752`
     },
     kongjianUrl() {
-      return `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?summary=${this.text}&title=${this.title}&url=${this.url}&pics=${this.image}&otype=share`
+      return `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?summary=${this.share.content || this.share.summary}&title=${this.share.title}&url=${this.share.url}&pics=${this.share.image}&otype=share`
     },
     qqUrl() {
-      return `http://connect.qq.com/widget/shareqq/index.html?desc=&summary=${this.text}&title=${this.title}&url=${this.url}&pics=${this.image}`
+      return `http://connect.qq.com/widget/shareqq/index.html?desc=&summary=${this.share.content || this.share.summary}&title=${this.share.title}&url=${this.share.url}&pics=${this.share.image}`
     },
   },
+  created() {
+    this._type = undefined
+    this._id = undefined
+  },
+  mounted() {
+    const path = this.$route.path
+
+    this._changeFooterByPath(path)
+  },
   methods: {
+    _changeFooterByPath(path) {
+      this._type = path.split('/')[1]
+      this._id = path.split('/')[2]
+
+      this.slide = false
+
+      if (this._id) {
+        this._getFooterInfo(this._type, this._id)
+      }
+    },
+    _getFooterInfo(type, id) {
+      getFooterInfo(type, id).then(res => {
+        if (res.query.type === this._type && res.query.id === this._id) {
+          this.previousId = res.previousId
+          this.nextId = res.nextId
+          this.share = res.share || {}
+
+          if (res.share) {
+            this.slide = true 
+          }
+        }
+      })
+    },
+    goBefore() {
+      if (this.previousId !== '') {
+        this.$router.push(`/${this._type}/${this.previousId}`)
+      }
+    },
+    goNext() {
+      if (this.nextId !== '') {
+        this.$router.push(`/${this._type}/${this.nextId}`)
+      }
+    },
     handleShareClick() {
       this.show = true
     },
@@ -88,6 +138,9 @@ export default {
         width 100px
         line-height 50px
         text-align center
+
+        &.darken
+          color #aaaaaa
 
       i 
         font-size 20px
@@ -152,6 +205,15 @@ export default {
 
   .slide-enter-active, .slide-leave-active
     transition all .3s ease
+
+  .slide-enter, .slide-leave-to
+    transform translate3d(0, 100%, 0)
+    opacity 0
+</style>
+
+<style lang="stylus" scoped>
+  .slide-enter-active, .slide-leave-active
+    transition all .2s ease
 
   .slide-enter, .slide-leave-to
     transform translate3d(0, 100%, 0)

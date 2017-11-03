@@ -22,7 +22,10 @@ export default {
   data() {
     return {
       content: '',
-      swiper: {},
+      swiper: {
+        imgs: [],
+        title: '',
+      },
       singleLoading: true,
     }
   },
