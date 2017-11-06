@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store/store'
 
 import LazyLoad from 'base/plugin/lazyload'
 
@@ -12,6 +13,7 @@ Vue.use(LazyLoad)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   render: h => h(App)
 })

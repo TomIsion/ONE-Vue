@@ -1,0 +1,2 @@
+export const GET_MUSIC_INFO = 'GET_MUSIC_INFO'
+export const APPEND_MUSIC_INFO = 'APPEND_MUSIC_INFO'
