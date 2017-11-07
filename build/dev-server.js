@@ -1,9 +1,9 @@
 'use strict'
 require('./check-versions')()
-const axios = require('axios')
-const crawler = require('crawler')
 
 const config = require('../config')
+const apiRoutes = require('./dev-own-routes')
+
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
 }
@@ -25,134 +25,6 @@ const proxyTable = config.dev.proxyTable
 
 const app = express()
 const compiler = webpack(webpackConfig)
-
-const apiRoutes = express.Router()
-
-const getCookie = (cookie, name) => cookie.replace(/\s/, '').split(';')
-  .reduce((pre, cur) => {
-    pre[cur.split('=')[0]] = cur.split('=')[1]
-    return pre
-  }, {})[name]
-
-let _token = undefined
-let PHPSESSID = undefined
-
-apiRoutes.get('/api/list', function(request, response) {
-  const path = request.path
-  const params = request.query
-  const type = params.type
-  const index = params.index
-
-  // if (_token && PHPSESSID) {
-  //   axios.get(
-  //     `http://m.wufazhuce.com/${type}/ajaxlist/${index}`,
-  //     {
-  //       params: {
-  //         _token,
-  //       },
-  //       headers: {
-  //         Host: 'm.wufazhuce.com',
-  //         Referer: 'http://m.wufazhuce.com',
-  //         Cookie: `PHPSESSID=${PHPSESSID}`,
-  //       },
-  //     }
-  //   )
-  //   .then(res => {
-  //     response.json(res.data) 
-  //   })
-  //   .catch(err => console.log(err))
-  // } else {
-    var c = new crawler({
-      maxConnections : 10,
-      callback: function (error, res, done) {
-        if (error) {
-          console.log(error)
-        } else {
-          if (!_token) _token = /One.token\s=\s\'(\w+)\'/.exec(res.body)[1]
-          if (!PHPSESSID) PHPSESSID = getCookie(res.headers['set-cookie'][0], 'PHPSESSID')
-  
-          axios.get(
-            `http://m.wufazhuce.com/${type}/ajaxlist/${index}`,
-            {
-              params: {
-                _token,
-              },
-              headers: {
-                Host: 'm.wufazhuce.com',
-                Referer: 'http://m.wufazhuce.com',
-                Cookie: `PHPSESSID=${PHPSESSID}`,
-              },
-            }
-          )
-          .then(res => {
-            response.json(res.data) 
-          })
-          .catch(err => console.log(err))
-        }
-        done()
-      }
-    })
-    
-    c.queue('http://m.wufazhuce.com/one') 
-  // }
-})
-
-apiRoutes.get('/api/footer', function(request, response) {
-  const params = request.query
-  const type = params.type
-  const id = params.id
-
-  var c = new crawler({
-    maxConnections : 10,
-    callback: function (error, res, done) {
-      if (error) {
-        console.log(error)
-      } else {
-        if (type === 'one') {
-          const regPreviousId = /(?:dataSource\.previousPageUrl=["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
-          const regNextId = /(?:dataSource\.nextPageUrl=["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
-          const regBasicInfo = /(?:dataSource\.url=['"]{1})([^'"]*)[\s\S]*(?:dataSource\.title=['"]{1})([^'"]*)[\s\S]*(?:dataSource\.image_url=['"]{1})([^'"]*)/gm
-          const regContent = /(?:dataSource\.content=['"]{1})([^'"]*)/gm
-          const regSummary = /(?:dataSource\.summary=['"]{1})([^'"]*)/gm
-  
-          const objPreviousId = regPreviousId.exec(res.body)
-          const objNextId = regNextId.exec(res.body)
-          const objBasicInfo = regBasicInfo.exec(res.body)
-          const objContent = regContent.exec(res.body)
-          const objSummary = regSummary.exec(res.body)
-  
-          response.json({
-            query: params,
-            previousId: objPreviousId && objPreviousId[1],
-            nextId:  objNextId && objNextId[1],
-            share: {
-              url: objBasicInfo && objBasicInfo[1],
-              title: objBasicInfo && objBasicInfo[2],
-              content: objContent && objContent[1],
-              summary: objSummary && objSummary[1],
-              image: objBasicInfo && objBasicInfo[3],
-            },
-          })
-        } else if (type === 'movie') {
-          const regPreviousId = /(?:dataSource\.previousPageUrl = ["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
-          const regNextId = /(?:dataSource\.nextPageUrl = ["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
-
-          const objPreviousId = regPreviousId.exec(res.body)
-          const objNextId = regNextId.exec(res.body)
-
-          response.json({
-            query: params,
-            previousId: objPreviousId && objPreviousId[1],
-            nextId:  objNextId && objNextId[1],
-          })
-        }
-      }
-      done()
-    }
-  })
-  
-  c.queue(`http://m.wufazhuce.com/${type}/${id}`) 
-})
 
 app.use(apiRoutes)
 

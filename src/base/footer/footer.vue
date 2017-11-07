@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { getFooterInfo } from 'api/common/common'
+// import { getFooterInfo } from 'api/common/common'
 
 export default {
   data() {
@@ -80,17 +80,17 @@ export default {
       }
     },
     _getFooterInfo(type, id) {
-      getFooterInfo(type, id).then(res => {
-        if (res.query.type === this._type && res.query.id === this._id) {
-          this.previousId = res.previousId
-          this.nextId = res.nextId
-          this.share = res.share || {}
+      // getFooterInfo(type, id).then(res => {
+      //   if (res.query.type === this._type && res.query.id === this._id) {
+      //     this.previousId = res.previousId
+      //     this.nextId = res.nextId
+      //     this.share = res.share || {}
 
-          if (res.share) {
-            this.slide = true 
-          }
-        }
-      })
+      //     if (res.share) {
+      //       this.slide = true 
+      //     }
+      //   }
+      // })
     },
     goBefore() {
       if (this.previousId !== '') {

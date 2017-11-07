@@ -29,10 +29,27 @@ import { dateFormat } from 'common/js/date'
 export default {
   mixins: [mixinScrollLoad],
   name: 'movie',
+  data() {
+    return {
+      list: [],
+      singleInAjax: true,
+    }
+  },
   created() {
     this.dateFormat = dateFormat
   },
   methods: {
+    _getList(index = 0) {
+      this.singleInAjax = true
+
+      this._getListAjax(index)
+        .then(res => {
+          if (res.res === 0) {
+            this.list.push(...res.data)
+            this.singleInAjax = false
+          }
+        })
+    },
     _getListAjax: getMovieListByPageIndex,
   },
 }

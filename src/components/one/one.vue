@@ -21,7 +21,24 @@ import mixinScrollLoad from 'base/scroll-load/scroll-load'
 export default {
   mixins: [mixinScrollLoad],
   name: 'one',
+  data() {
+    return {
+      list: [],
+      singleInAjax: true,
+    }
+  },
   methods: {
+    _getList(index = 0) {
+      this.singleInAjax = true
+
+      this._getListAjax(index)
+        .then(res => {
+          if (res.res === 0) {
+            this.list.push(...res.data)
+            this.singleInAjax = false
+          }
+        })
+    },
     _getListAjax: getOneListByPageIndex,
   },
 }

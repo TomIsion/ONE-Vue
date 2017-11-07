@@ -2,13 +2,7 @@ import { isPassive } from 'common/js/switchScroll'
 import Loading from 'base/loading/loading'
 
 const mixinScrollLoad = {
-  data() {
-    return {
-      list: [],
-      singleInAjax: true,
-    }
-  },
-  mounted() {
+  created() {
     this._getList()
     
     window.addEventListener('scroll', this._bindScroll, isPassive ? {
@@ -41,17 +35,6 @@ const mixinScrollLoad = {
         passive: false,
       } : false)
     },
-    _getList(index = 0) {
-      this.singleInAjax = true
-
-      this._getListAjax(index)
-        .then(res => {
-          if (res.res === 0) {
-            this.list.push(...res.data)
-            this.singleInAjax = false
-          }
-        })
-    }
   },
   components: {
     Loading,

@@ -21,6 +21,8 @@ const lazyLoad = {
       inserted(el, binding) {
         const top = el.getBoundingClientRect().top
 
+        const ownLazySrc = el.getAttribute('src') || src
+
         arr.push({
           el,
           src: binding.value,
@@ -30,7 +32,7 @@ const lazyLoad = {
         if (top < windowHeight * 1.5) {
           el.setAttribute('src', binding.value)
         } else {
-          el.setAttribute('src', src)
+          el.setAttribute('src', ownLazySrc)
         }
       }
     })

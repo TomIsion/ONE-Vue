@@ -20,12 +20,15 @@ npm run build --report
 
 ## API
 
+> 参考资料 [ONE-API](https://github.com/sxyseo/ONE-API)
+
+> [虾米音乐播放](https://github.com/naoyeye/xiamiRunLeanCloud)
+
 ### 字段常量
 
 #### channel_name
 
 one 首页
-
 
 ### 列表请求示例
 

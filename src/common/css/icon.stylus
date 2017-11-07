@@ -1,10 +1,10 @@
 @font-face
   font-family: 'iconfont-one'
-  src: url('//at.alicdn.com/t/font_264637_ogh69h5gkk4t2o6r.eot')
-  src: url('//at.alicdn.com/t/font_264637_ogh69h5gkk4t2o6r.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_264637_ogh69h5gkk4t2o6r.woff') format('woff'),
-  url('//at.alicdn.com/t/font_264637_ogh69h5gkk4t2o6r.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_264637_ogh69h5gkk4t2o6r.svg#iconfont-one') format('svg')
+  src: url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.eot');
+  src: url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.woff') format('woff'),
+  url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.svg#iconfont-one-react') format('svg')
 
 [class^="icon-"], [class*=" icon-"]
   font-family 'iconfont-one' !important
@@ -46,3 +46,6 @@
 
 .icon-wechat:before
   content: '\e63a'
+
+.icon-xiami:before
+  content '\e60c'
