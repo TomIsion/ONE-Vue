@@ -48,6 +48,7 @@ const getMusicDetail = item => axios.get(
     }
 
     if (data.platform === '1') {
+      // 判断音乐源是虾米音乐 需要获取真实的音乐地址
       return new Promise((resolve, reject) => {
         axios.get('/api/songs', {
           params: {
@@ -82,3 +83,5 @@ export function getMusicListByStep(page, pageIndex) {
     }
   }).then(arr => Promise.all(arr.map(item => getMusicDetail(item))))
 }
+
+export { getMusicDetail }

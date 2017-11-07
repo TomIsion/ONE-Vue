@@ -3,6 +3,7 @@ const state = {
   music: {
     loading: false,
     info: [],
+    detail: undefined,
   },
 }
 

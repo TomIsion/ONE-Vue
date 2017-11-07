@@ -1,10 +1,10 @@
 @font-face
   font-family: 'iconfont-one'
-  src: url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.eot');
-  src: url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.woff') format('woff'),
-  url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_264637_vxzar2s5gsm26gvi.svg#iconfont-one-react') format('svg')
+  src: url('//at.alicdn.com/t/font_264637_fmbgid4tp53lerk9.eot');
+  src: url('//at.alicdn.com/t/font_264637_fmbgid4tp53lerk9.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_264637_fmbgid4tp53lerk9.woff') format('woff'),
+  url('//at.alicdn.com/t/font_264637_fmbgid4tp53lerk9.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_264637_fmbgid4tp53lerk9.svg#iconfont-one-react') format('svg')
 
 [class^="icon-"], [class*=" icon-"]
   font-family 'iconfont-one' !important
@@ -49,3 +49,6 @@
 
 .icon-xiami:before
   content '\e60c'
+
+.icon-music-words:before
+  content '\e844'

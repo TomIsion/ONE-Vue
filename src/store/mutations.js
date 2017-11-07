@@ -1,16 +1,23 @@
-import { GET_MUSIC_INFO, APPEND_MUSIC_INFO } from './mutation-types'
+import * as MutationTypes from './mutation-types'
 
 export default {
-  [GET_MUSIC_INFO] (state) {
+  [MutationTypes.GET_MUSIC_INFO] (state) {
     state.music.loading = true
   },
-  [APPEND_MUSIC_INFO] (state, payload) {
+  [MutationTypes.APPEND_MUSIC_INFO] (state, payload) {
     state.music = {
+      ...state.music,
       loading: false,
       info: [
         ...state.music.info,
         ...payload,
       ]
     }
-  }
+  },
+  [MutationTypes.CHANGE_MUSIC_DETAIL_ID] (state) {
+    state.music.detail = undefined
+  },
+  [MutationTypes.SET_MUSIC_DETAIL] (state, payload) {
+    state.music.detail = payload
+  },
 }

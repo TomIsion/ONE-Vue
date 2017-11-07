@@ -23,7 +23,6 @@
   </div>
 </template>
 
-
 <style lang="stylus" scoped>
   @import '~common/css/func.stylus'
 

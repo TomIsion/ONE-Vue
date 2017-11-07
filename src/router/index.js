@@ -6,6 +6,7 @@ import One from 'components/one/one'
 import OneDetail from 'components/one-detail/one-detail'
 import Article from 'components/article/article'
 import Music from 'components/music/music'
+import MusicDetail from 'components/music-detail/music-detail'
 import Movie from 'components/movie/movie'
 import MovieDetail from 'components/movie-detail/movie-detail'
 import Apps from 'components/apps/apps'
@@ -39,6 +40,11 @@ export default new Router({
       path: '/article',
       name: 'article',
       component: Article,
+    },
+    {
+      path: '/music/:id',
+      name: 'music-detail',
+      component: MusicDetail,
     },
     {
       path: '/music',

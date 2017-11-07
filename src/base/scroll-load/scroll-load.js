@@ -4,7 +4,7 @@ import Loading from 'base/loading/loading'
 const mixinScrollLoad = {
   created() {
     this._getList()
-    
+
     window.addEventListener('scroll', this._bindScroll, isPassive ? {
       capture: false,
       passive: false,
