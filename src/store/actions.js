@@ -2,26 +2,27 @@ import * as MutationTypes from './mutation-types'
 import { getMusicListByStep, getMusicDetail } from 'api/music/music'
 
 export default {
-  getMusicInfo(context, { page, pageIndex }) {
-    context.commit(MutationTypes.GET_MUSIC_INFO)
+  getMusicInfo(context, { singleInit }) {
+    if (singleInit && context.state.music.info.length > 0) {
+      // 什么都不做
+    } else {
+      context.commit(MutationTypes.GET_MUSIC_INFO)
 
-    getMusicListByStep(page, pageIndex).then(res => {
-      context.commit(MutationTypes.APPEND_MUSIC_INFO, res)
-    })
+      getMusicListByStep().then(res => {
+        if (res === undefined) {
+          context.commit(MutationTypes.NO_LEFT_MUSIC_INFO)
+        } else {
+          context.commit(MutationTypes.APPEND_MUSIC_INFO, res)      
+        }
+      })
+    }
   },
   getMusicDetail(context, { id }) {
     context.commit(MutationTypes.CHANGE_MUSIC_DETAIL_ID)
 
-    if (context.state.music.info.find(item => item.id === id)) {
-      context.commit(
-        MutationTypes.SET_MUSIC_DETAIL,
-        context.state.music.info.find(item => item.id === id)
+    getMusicDetail({ id })
+      .then(
+        data => context.commit(MutationTypes.SET_MUSIC_DETAIL, data)
       )
-    } else {
-      getMusicDetail({ id })
-        .then(
-          data => context.commit(MutationTypes.SET_MUSIC_DETAIL, data)
-        )
-    }
   },
 }

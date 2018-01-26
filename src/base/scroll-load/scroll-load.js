@@ -3,7 +3,9 @@ import Loading from 'base/loading/loading'
 
 const mixinScrollLoad = {
   created() {
-    this._getList()
+    this._getList({
+      singleInit: true,
+    })
 
     window.addEventListener('scroll', this._bindScroll, isPassive ? {
       capture: false,
@@ -26,7 +28,10 @@ const mixinScrollLoad = {
       const listHeight = elementList.clientHeight + 40
 
       if (windowHeight + windowScrollHeight + windowHeight / 2 > listHeight && !this.singleInAjax) {
-        this._getList(this.list[this.list.length - 1].id)
+        this._getList({
+          singleInit: false,
+          index: this.list[this.list.length - 1].id,
+        })
       }
     },
     _removeHandleScroll() {

@@ -9,14 +9,13 @@
       <dd>
         <div class="cover">
           <div>
-            <i class="icon-xiami"></i>
-            <img class="music-cover" src="../../assets/images/music-list-placeholder.png" v-lazy="`http://image.wufazhuce.com/${item.listInfo.co}`" alt="">
+            <i v-if="item.music_id.indexOf('wufazhuce') === -1" class="icon-xiami"></i>
+            <img class="music-cover" src="../../assets/images/music-list-placeholder.png" v-lazy="item.cover" alt="">
             <img class="circle" src="../../assets/images/circle-btn.png" alt="">
           </div>
         </div>
-        <p class="music" v-html="item.listInfo.su"></p>
-        <p class="sub-title" v-html="item.story_summary"></p>
-        <p class="time" v-html="_dateFormat(item.maketime, 'YYYY/MM/DD')"></p>
+        <p class="music" v-html="item.title"></p>
+        <p class="sub-title" v-html="`—— ${item.album}`"></p>
       </dd>
     </dl>
     <loading v-show="singleInAjax"></loading>
@@ -57,6 +56,8 @@
         padding 9px 0 13px
 
     dd
+      padding-bottom 20px
+
       .cover
         height 205px
         margin 9px 0
@@ -106,7 +107,7 @@
         color rgba(0, 0, 0, .6)
         line-height 22px
         font-size 12px
-        margin 7px 20px 0
+        margin 3px 20px 0
         overflow-text(2)
 
       .time
@@ -119,10 +120,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { dateFormat } from 'common/js/date'
 import mixinScrollLoad from 'base/scroll-load/scroll-load'
-
-const PAGE_SIZE = 5
 
 export default {
   mixins: [mixinScrollLoad],
@@ -131,20 +129,12 @@ export default {
     ...mapState({
       singleInAjax: state => state.music.loading,
       list: state => state.music.info,
-    })
-  },
-  created() {
-    this._dateFormat = dateFormat
-    this.pageIndex = 0
+      singleFinished: state => state.music.finished,
+    }),
   },
   methods: {
-    _getList() {
-      this._getMusic({
-        page: PAGE_SIZE,
-        pageIndex: this.pageIndex,
-      })
-
-      this.pageIndex += 1
+    _getList(singleInit) {
+      this._getMusic(singleInit)
     },
     ...mapActions({
       _getMusic: 'getMusicInfo',

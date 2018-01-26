@@ -1,20 +1,20 @@
 <template>
   <div class="container">
     <ul ref="list">
-      <li v-for="item in list" :key="item.item_id" @click="handleClickItem(item.item_id)">
+      <li v-for="item in list" :key="item.id" @click="handleClickItem(item.id)">
         <p class="type">- 影视 -</p>
-        <h2 v-html="item.title"></h2>
-        <p class="author" v-html="`文 / ${item.author.user_name}`"></p>
+        <h2 v-html="item.storytitle"></h2>
+        <p class="author" v-html="`文 / ${item.user_name}`"></p>
         <div class="pic-placeholder">
           <div>
-            <img v-lazy="item.img_url" :alt="item.subtitle">
+            <img v-lazy="item.detailcover" :alt="item.title">
           </div>
         </div>
         <dl>
-          <dt v-html="item.forward"></dt>
-          <dd v-html="`—— 关于《${item.subtitle}》`"></dd>
+          <dt v-html="item.officialstory"></dt>
+          <dd v-html="`—— 关于《${item.title}》`"></dd>
         </dl>
-        <p class="time">{{ dateFormat(item.post_date, 'YYYY/MM/DD') }}</p>
+        <p class="time">{{ dateFormat(item.maketime, 'YYYY/MM/DD') }}</p>
       </li>
     </ul>
     <loading v-show="singleInAjax"></loading>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { getMovieListByPageIndex } from 'api/movie/movie'
+import { getMovieList } from 'api/movie/movie'
 import mixinScrollLoad from 'base/scroll-load/scroll-load'
 import { dateFormat } from 'common/js/date'
 
@@ -39,18 +39,20 @@ export default {
     this.dateFormat = dateFormat
   },
   methods: {
-    _getList(index = 0) {
+    _getList() {
       this.singleInAjax = true
 
-      this._getListAjax(index)
-        .then(res => {
-          if (res.res === 0) {
-            this.list.push(...res.data)
-            this.singleInAjax = false
-          }
+      this._getListAjax()
+        .then(arr => {
+          this.singleInAjax = false
+
+          this.list = [
+            ...this.list,
+            ...arr,
+          ]
         })
     },
-    _getListAjax: getMovieListByPageIndex,
+    _getListAjax: getMovieList,
   },
 }
 </script>
@@ -119,7 +121,7 @@ export default {
         margin 10px 20px 0
 
         dt
-          overflow-text(2)
+          overflow-text(5)
         
         dd
           margin-top 3px

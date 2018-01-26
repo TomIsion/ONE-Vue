@@ -28,7 +28,7 @@ export default {
     }
   },
   methods: {
-    _getList(index = 0) {
+    _getList({ index = 0 }) {
       this.singleInAjax = true
 
       this._getListAjax(index)

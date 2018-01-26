@@ -39,3 +39,14 @@ Hover > Nav 的结构变成 Hover + Nav 结构
   2. 元素位置的计算可以尽量的避免
 
 > 正则表达式问题 从数据中提取多个资源 会存在某些资源不存在的情况 如何编写正则表达式
+
+> slot 的使用
+
+具名 slot 插槽上面的属性不会被混合 会直接被忽略
+
+*但是有的会被继承？*
+
+有时间可以尝试阅读更新日志
+
+https://stackoverflow.com/questions/42114188/bind-class-to-a-slot-in-vue-js-2?answertab=active#tab-top
+

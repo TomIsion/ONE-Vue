@@ -11,7 +11,14 @@ export default {
       info: [
         ...state.music.info,
         ...payload,
-      ]
+      ],
+    }
+  },
+  [MutationTypes.NO_LEFT_MUSIC_INFO] (state) {
+    state.music = {
+      ...state.music,
+      loading: false,
+      finished: true,
     }
   },
   [MutationTypes.CHANGE_MUSIC_DETAIL_ID] (state) {

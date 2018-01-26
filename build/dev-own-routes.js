@@ -21,25 +21,7 @@ apiRoutes.get('/api/list', function (request, response) {
   const type = params.type
   const index = params.index
 
-  // if (_token && PHPSESSID) {
-  //   axios.get(
-  //     `http://m.wufazhuce.com/${type}/ajaxlist/${index}`,
-  //     {
-  //       params: {
-  //         _token,
-  //       },
-  //       headers: {
-  //         Host: 'm.wufazhuce.com',
-  //         Referer: 'http://m.wufazhuce.com',
-  //         Cookie: `PHPSESSID=${PHPSESSID}`,
-  //       },
-  //     }
-  //   )
-  //   .then(res => {
-  //     response.json(res.data) 
-  //   })
-  //   .catch(err => console.log(err))
-  // } else {
+  // 获取页面上的用户信息
   var c = new crawler({
     maxConnections: 10,
     callback: function (error, res, done) {
@@ -71,7 +53,6 @@ apiRoutes.get('/api/list', function (request, response) {
   })
 
   c.queue('http://m.wufazhuce.com/one')
-  // }
 })
 
 apiRoutes.get('/api/footer', function (request, response) {
@@ -223,6 +204,8 @@ apiRoutes.get('/api/songs', function (request, response) {
               res: 1,
               message: '服务器报错'
             })
+
+            return
           }
 
           if (!res || !res.playlist) {
@@ -230,6 +213,8 @@ apiRoutes.get('/api/songs', function (request, response) {
               res: 1,
               message: '没找到相关信息，该歌曲很可能已经从虾米下架'
             })
+
+            return
           }
 
           const xiamiRealSong = {}

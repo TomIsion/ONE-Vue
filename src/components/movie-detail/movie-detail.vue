@@ -14,9 +14,6 @@
 
 <script>
 import Swiper from 'base/swiper/swiper'
-import Loading from 'base/loading/loading'
-
-import { getMovieDetailById } from 'api/movie/movie'
 
 export default {
   data() {
@@ -28,15 +25,6 @@ export default {
       },
       singleLoading: true,
     }
-  },
-  created() {
-    this.articleImages = []
-  },
-  mounted() {
-    this._getMovieDetailById(this.$route.params.id)
-  },
-  beforeDestory() {
-    this._removeGif()
   },
   methods: {
     _changeSrc(event) {
@@ -58,41 +46,40 @@ export default {
       })
     },
     _getMovieDetailById(id) {
-      getMovieDetailById(id).then(res => {
-        // 正则获取影视正文
-        const regContent = /(<div class="one-title-box"[\s\S]*?)(?=\s*<script)/
-        this.content = regContent.exec(res.data.html_content)[1]
+      // getMovieDetailById(id).then(res => {
+      //   // 正则获取影视正文
+      //   const regContent = /(<div class="one-title-box"[\s\S]*?)(?=\s*<script)/
+      //   this.content = regContent.exec(res.data.html_content)[1]
 
-        // 正则获取 swiper 图片背景
-        const regSwiperImgs = /class="swiper-slide" style="background-image:url\(([\S]*)(?=\)"\sdata-src)/g
-        let _arr
-        const arrSwiperImage = []
-        while (
-          (_arr = regSwiperImgs.exec(res.data.html_content)) !== null
-        ) {
-          arrSwiperImage.push(_arr[1])
-        }
+      //   // 正则获取 swiper 图片背景
+      //   const regSwiperImgs = /class="swiper-slide" style="background-image:url\(([\S]*)(?=\)"\sdata-src)/g
+      //   let _arr
+      //   const arrSwiperImage = []
+      //   while (
+      //     (_arr = regSwiperImgs.exec(res.data.html_content)) !== null
+      //   ) {
+      //     arrSwiperImage.push(_arr[1])
+      //   }
 
-        // 正则获取相关影视名称
-        const regMovieName = /class="one-movie-swipe-title">([\s\S]*?)(?=<\/span>)/
-        const strMovieName = regMovieName.exec(res.data.html_content)[1].trim()
+      //   // 正则获取相关影视名称
+      //   const regMovieName = /class="one-movie-swipe-title">([\s\S]*?)(?=<\/span>)/
+      //   const strMovieName = regMovieName.exec(res.data.html_content)[1].trim()
 
-        this.swiper = {
-          title: strMovieName,
-          imgs: arrSwiperImage,
-        }
+      //   this.swiper = {
+      //     title: strMovieName,
+      //     imgs: arrSwiperImage,
+      //   }
 
-        this.$nextTick(() => {
-          this.articleImages = this.$refs.article.querySelectorAll('.one-gif')
-          this._bindGif()
+      //   this.$nextTick(() => {
+      //     this.articleImages = this.$refs.article.querySelectorAll('.one-gif')
+      //     this._bindGif()
 
-          this.singleLoading = false
-        })
-      })
+      //     this.singleLoading = false
+      //   })
+      // })
     },
   },
   components: {
-    Loading,
     Swiper,
   }
 }

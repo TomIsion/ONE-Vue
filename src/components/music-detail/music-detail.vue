@@ -13,7 +13,7 @@
       <i class="icon-music-words"></i>
       <h1 v-html="music && music.story_title"></h1>
       <p class="author" v-html="music && `文 / ${music.author_list[0].user_name}`"></p>
-      <div class="content" v-html="story"></div>
+      <div class="content" v-html="music && music.story"></div>
     </div>
     <loading v-show="singleInAjax"></loading>
   </div>
@@ -131,14 +131,6 @@ export default {
     }
   },
   computed: {
-    story() {
-      // 去除文案中的 APP 相关内容
-      if (!this.music) {
-        return ''
-      } else {
-        return this.music.story.replace(/<br>|这里藏着一段音乐，前往应用商店，下载「一个」最新版本收听！/gm, '')
-      }
-    },
     ...mapState({
       music: state => state.music.detail,
     })
@@ -151,33 +143,23 @@ export default {
         this.singleInAjax = false
       }
     },
-    test(newValue) {
-      console.log(newValue)
-    }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm._getMusicDetail({
         id: to.params.id,
       })
-
-      vm._backTop()
     })
   },
   beforeRouteUpdate(to, from, next) {
+    // 下部导航切换效果
     this._getMusicDetail({
       id: to.params.id,
     })
 
-    this._backTop()
-
-    // 需要每次都 scrollTop 置为 0
     next()
   },
   methods: {
-    _backTop() {
-      window.scrollTo(0, 0)
-    },
     ...mapActions({
       _getMusicDetail: 'getMusicDetail',
     })
