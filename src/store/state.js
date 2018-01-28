@@ -6,6 +6,10 @@ const state = {
     info: [],
     detail: undefined,
   },
+  // 影视页面的资源信息
+  movie: {
+    info: [],
+  },
 }
 
 export default state

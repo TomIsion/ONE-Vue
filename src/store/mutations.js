@@ -27,4 +27,17 @@ export default {
   [MutationTypes.SET_MUSIC_DETAIL] (state, payload) {
     state.music.detail = payload
   },
+  
+  // 影视模块相关内容
+  [MutationTypes.GET_MOVIE_INFO] (state) {
+    state.movie.loading = true
+  },
+  [MutationTypes.RESET_MOVIE_INFO] (state) {
+    state.movie.loading = true
+  },
+  [MutationTypes.APPEND_MOVIE_INFO] (state, payload) {
+    state.movie = {
+
+    }
+  }
 }

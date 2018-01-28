@@ -4,9 +4,7 @@ const listUrl = 'http://v3.wufazhuce.com:8000/api/movie/list/'
 const detailUrl = 'http://v3.wufazhuce.com:8000/api/movie/detail/'
 const detailStoryUrl = 'http://v3.wufazhuce.com:8000/api/movie/'
 
-let id = 0
-
-export function getMovieList() {
+export function getMovieList(id = 0) {
   return axios.get(`${listUrl}${id}`)
     .then(res => res.data)
     .then(res => {

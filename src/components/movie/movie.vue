@@ -22,37 +22,36 @@
 </template>
 
 <script>
-import { getMovieList } from 'api/movie/movie'
 import mixinScrollLoad from 'base/scroll-load/scroll-load'
 import { dateFormat } from 'common/js/date'
+import { mapActions, mapState } from 'vuex' 
 
 export default {
   mixins: [mixinScrollLoad],
   name: 'movie',
-  data() {
-    return {
-      list: [],
-      singleInAjax: true,
-    }
+  computed: {
+    ...mapState('movie', {
+      singleInAjax: state => state.loading
+    }),
+    ...mapState('movie', [
+      'list',
+      'finished',
+    ])
   },
   created() {
     this.dateFormat = dateFormat
+
+    if (this.list.length === 0) {
+      this._getList()
+    }
   },
   methods: {
     _getList() {
-      this.singleInAjax = true
-
-      this._getListAjax()
-        .then(arr => {
-          this.singleInAjax = false
-
-          this.list = [
-            ...this.list,
-            ...arr,
-          ]
-        })
+      this.getMovieInfo()
     },
-    _getListAjax: getMovieList,
+    ...mapActions('movie', [
+      'getMovieInfo',
+    ]),
   },
 }
 </script>
