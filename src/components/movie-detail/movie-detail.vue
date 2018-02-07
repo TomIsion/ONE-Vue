@@ -2,29 +2,23 @@
   <div class="movie-details container">
     <swiper
       class="swiper"
-      :imgs="swiper.imgs"
-      :title="swiper.title"
+      :imgs="detail.arr_swiper"
+      :title="detail.title"
     ></swiper>
-    <article class="movie-details-container" v-html="content" ref="article"></article>
-    <loading
-      v-if="singleLoading"
-    ></loading>
+    <article class="movie-details-container" ref="article" v-html="detail.html_content">
+    </article>
   </div>
 </template>
 
 <script>
 import Swiper from 'base/swiper/swiper'
+import { mapState } from 'vuex'
 
 export default {
-  data() {
-    return {
-      content: '',
-      swiper: {
-        imgs: [],
-        title: '',
-      },
-      singleLoading: true,
-    }
+  computed: {
+    ...mapState('movie', [
+      'detail',
+    ])
   },
   methods: {
     _changeSrc(event) {
@@ -90,9 +84,6 @@ export default {
     height 210px
 
   article.movie-details-container
-    .one-movie-header-box
-      height 210px
-
     .one-title-box
       margin 30px 20px 0
       line-height 40px
@@ -102,7 +93,7 @@ export default {
 
     .one-simple-author-box
       font-style 14px
-      margin 40px 20px 30px
+      margin 20px 20px 30px
       line-height 32px
       text-align center
 

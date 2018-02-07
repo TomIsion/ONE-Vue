@@ -11,10 +11,11 @@ import Movie from 'components/movie/movie'
 import MovieDetail from 'components/movie-detail/movie-detail'
 import Apps from 'components/apps/apps'
 import About from 'components/about/about'
+import store from '../store/index'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -71,5 +72,26 @@ export default new Router({
       name: 'about',
       component: About,
     }
-  ]
+  ],
 })
+
+router.beforeResolve((to, from, next) => {
+  // 判断是前往了终页
+  const reg = new RegExp(`(${from.name})/(\\d+)`)
+  const result = reg.exec(to.path)
+
+  if (!result) {
+    next()
+  } else {
+    const name = from.name
+    const id = result[2]
+
+    if (id) {
+      store.dispatch(`${name}/getDetailInfo`, id).then(() => {
+        next()
+      })
+    }
+  }
+})
+
+export default router

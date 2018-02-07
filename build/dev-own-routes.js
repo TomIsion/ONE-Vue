@@ -32,21 +32,21 @@ apiRoutes.get('/api/list', function (request, response) {
         if (!PHPSESSID) PHPSESSID = getCookie(res.headers['set-cookie'][0], 'PHPSESSID')
 
         axios.get(
-            `http://m.wufazhuce.com/${type}/ajaxlist/${index}`, {
-              params: {
-                _token,
-              },
-              headers: {
-                Host: 'm.wufazhuce.com',
-                Referer: 'http://m.wufazhuce.com',
-                Cookie: `PHPSESSID=${PHPSESSID}`,
-              },
-            }
-          )
-          .then(res => {
-            response.json(res.data)
-          })
-          .catch(err => console.log(err))
+          `http://m.wufazhuce.com/${type}/ajaxlist/${index}`, {
+            params: {
+              _token,
+            },
+            headers: {
+              Host: 'm.wufazhuce.com',
+              Referer: 'http://m.wufazhuce.com',
+              Cookie: `PHPSESSID=${PHPSESSID}`,
+            },
+          }
+        )
+        .then(res => {
+          response.json(res.data)
+        })
+        .catch(err => console.log(err))
       }
       done()
     }
