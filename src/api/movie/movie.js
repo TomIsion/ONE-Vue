@@ -47,8 +47,12 @@ function getMovieListDetailById(id) {
 }
 
 export function getMovieContentById(id) {
-  return axios.get(`${contentUrl}${id}`)
-    .then(res => res.data)
+  return axios.get(`${contentUrl}${id}`, {
+    params: {
+      // 否则没有图片
+      version: 'v4.5.1',
+    },
+  }).then(res => res.data)
     .then(res => {
       if (res.res === 0) {
         const data = res.data
