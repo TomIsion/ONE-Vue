@@ -1,39 +1,55 @@
+import { css, on, off } from 'base/utils/dom'
+
+const findScrollContainer = ele => {
+  let parent = ele.parentElement
+
+  while (parent) {
+    if (!parent.parentElement) {
+      break
+    } else if (css(parent, 'overflow-y') === 'scroll' || css(parent, 'overflowY') === 'auto') {
+      break
+    } else {
+      parent = parent.parentElement
+    }
+  }
+
+  return parent
+}
+
 const lazyLoad = {
   install(Vue, options) {
     const src = (options && options.src) || 'http://image.wufazhuce.com/list-paceholder.png'
-    const arr = []
-
-    const windowHeight = window.innerHeight
-
-    window.addEventListener('scroll', e => {
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].single) {
-        } else {
-          if (arr[i].el.getBoundingClientRect().top < windowHeight * 1.5) {
-            arr[i].single = true
-            arr[i].el.setAttribute('src', arr[i].src)
-          }
-        }
-      }
-    })
 
     Vue.directive('lazy', {
       inserted(el, binding) {
-        const top = el.getBoundingClientRect().top
+        // 找到滚动容器
+        const domContainer = findScrollContainer(el)
 
+        // 获得预加载的图片
         const ownLazySrc = el.getAttribute('src') || src
+        el.setAttribute('src', ownLazySrc)
 
-        arr.push({
-          el,
-          src: binding.value,
-          single: false,
-        })
+        const eventBind = event => _bind(event)
+        eventBind._id = Math.random()
         
-        if (top < windowHeight * 1.5) {
-          el.setAttribute('src', binding.value)
-        } else {
-          el.setAttribute('src', ownLazySrc)
+        const _bind = event => {
+          // 滚动容器的高度
+          // 滚动容器的上部距离
+          // 当前元素的上部距离
+          const heightContainer = domContainer.getBoundingClientRect().height
+          const topContainer = domContainer.getBoundingClientRect().top
+          const topCurrent = el.getBoundingClientRect().top
+
+          if (topCurrent - topContainer < heightContainer * 1.6) {
+            el.setAttribute('src', binding.value)
+
+            off(domContainer, 'scroll', eventBind)
+          }
         }
+
+        on(domContainer, 'scroll', eventBind)
+
+        eventBind()
       }
     })
   }

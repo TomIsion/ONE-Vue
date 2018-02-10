@@ -19,6 +19,18 @@ export default {
 </script>
 
 <style lang="stylus">
+  html
+  body
+    width 100%
+    height 100%
+
+  #app
+    width 100%
+    height 100%
+
   .container
     padding-top 40px
+    height 100%
+    box-sizing border-box
+    overflow-y scroll
 </style>

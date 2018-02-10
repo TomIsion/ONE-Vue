@@ -1,13 +1,16 @@
 import { isPassive } from 'common/js/switchScroll'
 import Loading from 'base/loading/loading'
 
+const CONTAINER_NAME = 'scrollContainer'
+const LIST_NAME = 'list'
+
 const mixinScrollLoad = {
-  created() {
+  mounted() {
     // this._getList({
     //   singleInit: true,
     // })
 
-    window.addEventListener('scroll', this._bindScroll, isPassive ? {
+    this.$refs[CONTAINER_NAME].addEventListener('scroll', this._bindScroll, isPassive ? {
       capture: false,
       passive: false,
     } : false)
@@ -22,12 +25,12 @@ const mixinScrollLoad = {
       })
     },
     _bindScroll() {
-      const elementList = this.$refs.list
+      const elementList = this.$refs[LIST_NAME]
       const windowHeight = window.innerHeight
-      const windowScrollHeight = window.scrollY
+      const scrollHeight = this.$refs[CONTAINER_NAME].scrollTop
       const listHeight = elementList.clientHeight + 40
 
-      if (windowHeight + windowScrollHeight + windowHeight / 2 > listHeight && !this.singleInAjax) {
+      if (windowHeight + scrollHeight + windowHeight / 2 > listHeight && !this.singleInAjax) {
         this._getList({
           singleInit: false,
           index: this.list[this.list.length - 1].id,
@@ -35,7 +38,7 @@ const mixinScrollLoad = {
       }
     },
     _removeHandleScroll() {
-      window.removeEventListener('scroll', this._bindScroll, isPassive ? {
+      this.$refs[CONTAINER_NAME].removeEventListener('scroll', this._bindScroll, isPassive ? {
         capture: false,
         passive: false,
       } : false)

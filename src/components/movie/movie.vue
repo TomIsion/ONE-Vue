@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" ref="scrollContainer">
     <ul ref="list">
       <li v-for="item in list" :key="item.id" @click="handleClickItem(item.id)">
         <p class="type">- 影视 -</p>
