@@ -1,4 +1,5 @@
 import { on, off } from 'common/js/dom'
+import { debunce } from 'common/js/utils'
 
 const CONTAINER_NAME = 'scrollContainer'
 
@@ -18,9 +19,12 @@ const mixinKeepScroll = {
   },
   methods: {
     _rememberPosition(event) {
-      // @todos
-      // 这里需要做节流
-      this._savePosition({scrollLeft: event.currentTarget.scrollLeft, scrollTop: event.currentTarget.scrollTop})
+      if (!this._debunceFunc) {
+        this._debunceFunc = debunce(this._savePosition, 100) 
+      }
+
+      const currentTarget = event.currentTarget
+      this._debunceFunc({ scrollLeft: currentTarget.scrollLeft, scrollTop: currentTarget.scrollTop })
     },
   },
 }
