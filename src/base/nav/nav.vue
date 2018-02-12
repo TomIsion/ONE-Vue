@@ -66,7 +66,7 @@ export default {
     },
     handleNavClick(path) {
       this.singeInnerShow = false
-      this.$router.replace({ path })
+      this.$router.push({ path })
     },
   },
 }

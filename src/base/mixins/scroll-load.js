@@ -1,4 +1,4 @@
-import { isPassive } from 'common/js/switchScroll'
+import { on, off } from 'common/js/dom'
 import Loading from 'base/loading/loading'
 
 const CONTAINER_NAME = 'scrollContainer'
@@ -6,17 +6,10 @@ const LIST_NAME = 'list'
 
 const mixinScrollLoad = {
   mounted() {
-    // this._getList({
-    //   singleInit: true,
-    // })
-
-    this.$refs[CONTAINER_NAME].addEventListener('scroll', this._bindScroll, isPassive ? {
-      capture: false,
-      passive: false,
-    } : false)
+    on(this.$refs[CONTAINER_NAME], 'scroll', this._bindScroll)
   },
   beforeDestroy() {
-    this._removeHandleScroll()
+    off(this.$refs[CONTAINER_NAME], 'scroll', this._bindScroll)
   },
   methods: {
     handleClickItem(id) {
@@ -36,12 +29,6 @@ const mixinScrollLoad = {
           index: this.list[this.list.length - 1].id,
         })
       }
-    },
-    _removeHandleScroll() {
-      this.$refs[CONTAINER_NAME].removeEventListener('scroll', this._bindScroll, isPassive ? {
-        capture: false,
-        passive: false,
-      } : false)
     },
   },
   components: {

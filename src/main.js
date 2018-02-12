@@ -4,14 +4,16 @@ import App from './App'
 import router from './router'
 import store from './store/index'
 
-import LazyLoad from 'base/plugin/lazyload'
+import lazyLoad from 'base/plugin/lazyload'
+import keepScroll from 'base/plugin/keepscroll'
 
 import 'common/css/index.stylus'
 
 sync(store, router)
 
 Vue.config.productionTip = false
-Vue.use(LazyLoad)
+Vue.use(lazyLoad)
+Vue.use(keepScroll)
 
 /* eslint-disable no-new */
 new Vue({

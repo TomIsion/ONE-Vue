@@ -1,3 +1,5 @@
+import { isPassive } from './switchScroll'
+
 export function setStyle(ele, objStyles) {
 
 }
@@ -20,4 +22,33 @@ export function removeClass(ele, className) {
     )
     item.className = beforeClassName.replace(reg, ' ').replace(/\s+/, ' ')
   }
+}
+
+const supportPassive = isPassive()
+
+const css = (ele, name) => {
+  // @to-check
+  return typeof getComputedStyle === 'undefined'
+    ? ele.style[name]
+    : getComputedStyle(ele, null).getPropertyValue(name)
+}
+
+const on = (ele, event, cb, capture = false) => {
+  ele.addEventListener(event, cb, supportPassive ? {
+    capture,
+    passive: true,
+  } : capture)
+}
+
+const off = (ele, event, cb, capture = false) => {
+  ele.removeEventListener(event, cb, supportPassive ? {
+    capture,
+    passive: true,
+  } : capture)
+}
+
+export {
+  css,
+  on,
+  off,
 }

@@ -22,20 +22,23 @@
 </template>
 
 <script>
-import mixinScrollLoad from 'base/scroll-load/scroll-load'
+import mixinScrollLoad from 'base/mixins/scroll-load'
+import mixinKeepScroll from 'base/mixins/keep-scroll'
 import { dateFormat } from 'common/js/date'
-import { mapActions, mapState } from 'vuex' 
+import { mapActions, mapState, mapMutations } from 'vuex' 
 
 export default {
-  mixins: [mixinScrollLoad],
+  mixins: [mixinScrollLoad, mixinKeepScroll],
   name: 'movie',
   computed: {
     ...mapState('movie', {
-      singleInAjax: state => state.loading
+      singleInAjax: state => state.loading,
     }),
     ...mapState('movie', [
       'list',
       'finished',
+      'scrollTop',
+      'scrollLeft',
     ])
   },
   created() {
@@ -52,6 +55,9 @@ export default {
     ...mapActions('movie', [
       'getMovieInfo',
     ]),
+    ...mapMutations('movie', {
+      _savePosition: 'SAVE_SCROLL_POSITION',
+    }),
   },
 }
 </script>

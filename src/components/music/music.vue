@@ -120,7 +120,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import mixinScrollLoad from 'base/scroll-load/scroll-load'
+import mixinScrollLoad from 'base/mixins/scroll-load'
 
 export default {
   mixins: [mixinScrollLoad],

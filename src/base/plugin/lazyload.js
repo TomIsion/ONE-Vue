@@ -1,4 +1,4 @@
-import { css, on, off } from 'base/utils/dom'
+import { css, on, off } from 'common/js/dom'
 
 const findScrollContainer = ele => {
   let parent = ele.parentElement

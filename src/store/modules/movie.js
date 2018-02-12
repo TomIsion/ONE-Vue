@@ -9,6 +9,7 @@ const mutationTypes = {
   BEGIN_GET_MOVIE: 'BEGIN_GET_MOVIE',
   APPEND_MOVIE_LIST: 'APPEND_MOVIE_LIST',
   CHANGE_MOVIE_DETAIL: 'CHANGE_MOVIE_DETAIL',
+  SAVE_SCROLL_POSITION: 'SAVE_SCROLL_POSITION',
 }
 
 const mutations = {
@@ -35,7 +36,11 @@ const mutations = {
   },
   [mutationTypes.CHANGE_MOVIE_DETAIL](state, payload) {
     state.detail = state.list.find(item => item.id === `${payload}`)
-  }
+  },
+  [mutationTypes.SAVE_SCROLL_POSITION](state, { scrollLeft, scrollTop }) {
+    state.scrollLeft = scrollLeft
+    state.scrollTop = scrollTop
+  },
 }
 
 const getInitInfo = () => {
@@ -49,6 +54,8 @@ const getInitInfo = () => {
 }
 
 const state = {
+  scrollLeft: 0,
+  scrollTop: 0,
   loading: false,
   finished: false,
   list: getInitInfo(),

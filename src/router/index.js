@@ -1,95 +1,85 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from 'components/index/index'
-import Search from 'components/search/search'
-import One from 'components/one/one'
-import OneDetail from 'components/one-detail/one-detail'
-import Article from 'components/article/article'
-import Music from 'components/music/music'
-import MusicDetail from 'components/music-detail/music-detail'
-import Movie from 'components/movie/movie'
-import MovieDetail from 'components/movie-detail/movie-detail'
-import Apps from 'components/apps/apps'
-import About from 'components/about/about'
 import store from '../store/index'
 
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
       name: 'index',
-      component: Index,
+      component: () => import('components/index/index'),
     },
     {
       path: '/search',
       name: 'search',
-      component: Search,
+      component: () => import('components/search/search'),
     },
     {
       path: '/one/:id',
       name: 'one-detail',
-      component: OneDetail,
+      component: () => import('components/one/one'),
     },
     {
       path: '/one',
       name: 'one',
-      component: One,
+      component: () => import('components/one-detail/one-detail'),
     },
     {
       path: '/article',
       name: 'article',
-      component: Article,
+      component: () => import('components/article/article'),
     },
     {
       path: '/music/:id',
       name: 'music-detail',
-      component: MusicDetail,
+      component: () => import('components/music-detail/music-detail'),
     },
     {
       path: '/music',
       name: 'music',
-      component: Music,
+      component: () => import('components/music/music'),
     },
     {
       path: '/movie/:id',
       name: 'movie-detail',
-      component: MovieDetail,
+      component: () => import('components/movie-detail/movie-detail'),
     },
     {
       path: '/movie',
       name: 'movie',
-      component: Movie,
+      component: () => import('components/movie/movie'),
     },
     {
       path: '/apps',
       name: 'apps-download',
-      component: Apps,
+      component: () => import('components/apps/apps'),
     },
     {
       path: '/about',
       name: 'about',
-      component: About,
+      component: () => import('components/about/about'),
     }
   ],
 })
 
 router.beforeResolve((to, from, next) => {
-  // 判断是前往了终页
-  const reg = new RegExp(`(${from.name})/(\\d+)`)
+  // 判断是前往终页
+  const reg = new RegExp(`/(.+)/(\\d+)`)
   const result = reg.exec(to.path)
 
   if (!result) {
     next()
   } else {
-    const name = from.name
+    const name = result[1]
     const id = result[2]
 
-    if (id) {
-      store.dispatch(`${name}/getDetailInfo`, id).then(() => {
-        next()
-      })
+    if (name && id !== undefined) {
+      store.dispatch(`${name}/getDetailInfo`, id).then(() => next())
+    } else {
+      next()
     }
   }
 })

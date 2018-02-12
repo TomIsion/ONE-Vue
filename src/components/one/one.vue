@@ -16,7 +16,7 @@
 
 <script>
 import { getOneListByPageIndex } from 'api/one/one'
-import mixinScrollLoad from 'base/scroll-load/scroll-load'
+import mixinScrollLoad from 'base/mixins/scroll-load'
 
 export default {
   mixins: [mixinScrollLoad],
