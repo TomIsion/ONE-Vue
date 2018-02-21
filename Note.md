@@ -50,3 +50,6 @@ Hover > Nav 的结构变成 Hover + Nav 结构
 
 https://stackoverflow.com/questions/42114188/bind-class-to-a-slot-in-vue-js-2?answertab=active#tab-top
 
+> 移动端事件监听
+
+不应该使用 click

@@ -5,20 +5,31 @@
       :imgs="detail.arr_swiper"
       :title="detail.title"
     ></swiper>
-    <article class="movie-details-container" ref="article" v-html="detail.html_content">
+    <article
+      class="movie-details-container"
+      ref="article" 
+      v-html="detail.html_content">
     </article>
   </div>
 </template>
 
 <script>
 import Swiper from 'base/swiper/swiper'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
+import { find } from 'common/js/dom'
 
 export default {
   computed: {
     ...mapState('movie', [
       'detail',
     ])
+  },
+  mounted() {
+    this.articleImages = find(this.$refs['article'], '.one-gif')
+    this._bindGif()
+  },
+  beforeDestroy() {
+    this._removeGif()
   },
   methods: {
     _changeSrc(event) {
@@ -39,6 +50,10 @@ export default {
         ele.removeAddEventListener('click', this._changeSrc)
       })
     },
+    ...mapMutations('footer', {
+      setFooter: 'SET_FOOTER',
+      hideFooter: 'HIDE_FOOTER',
+    })
   },
   components: {
     Swiper,

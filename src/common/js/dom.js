@@ -47,8 +47,13 @@ const off = (ele, event, cb, capture = false) => {
   } : capture)
 }
 
+const find = (parent, selector) => {
+  return parent.querySelectorAll(selector)
+}
+
 export {
   css,
   on,
   off,
+  find,
 }
