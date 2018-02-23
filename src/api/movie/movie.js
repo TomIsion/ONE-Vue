@@ -46,6 +46,7 @@ function getMovieListDetailById(id) {
   })
 }
 
+// 终页获取详细信息异步
 export function getMovieContentById(id) {
   return axios.get(`${contentUrl}${id}`, {
     params: {
@@ -71,9 +72,22 @@ export function getMovieContentById(id) {
         return {
           htmlContent,
           arrSwiper,
+          title: data.title,
+          shareList: data.share_list,
         }
       } else {
         return {}
       }
     })
+}
+
+// 获取前一篇后一篇Id
+export function getPreviousAndNextId(id) {
+  return axios.get(`${detailUrl}${id}`)
+    .then(res => res.data)
+    .then(data => (data.res === 0 ? data.data : {}))
+    .then(data => ({
+      nextId: data.next_id,
+      prevId: data.previous_id,
+    }))
 }

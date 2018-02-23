@@ -1,4 +1,4 @@
-import { getMovieList, getMovieContentById } from 'api/movie/movie'
+import { getMovieList, getMovieContentById, getPreviousAndNextId } from 'api/movie/movie'
 import { getStorageInfo, saveStorageInfo } from 'common/js/utils'
 import { dateFormat } from 'common/js/date'
 
@@ -8,8 +8,10 @@ const date = dateFormat()
 const mutationTypes = {
   BEGIN_GET_MOVIE: 'BEGIN_GET_MOVIE',
   APPEND_MOVIE_LIST: 'APPEND_MOVIE_LIST',
+  GET_MOVIE_DETAIL: 'GET_MOVIE_DETAIL',
   CHANGE_MOVIE_DETAIL: 'CHANGE_MOVIE_DETAIL',
   SAVE_SCROLL_POSITION: 'SAVE_SCROLL_POSITION',
+  LEAVE_DETAIL: 'LEAVE_DETAIL',
 }
 
 const mutations = {
@@ -34,12 +36,18 @@ const mutations = {
       data: state.list,
     })
   },
+  [mutationTypes.GET_MOVIE_DETAIL](state) {
+    state.detail = undefined
+  },
   [mutationTypes.CHANGE_MOVIE_DETAIL](state, payload) {
-    state.detail = state.list.find(item => item.id === `${payload}`)
+    state.detail = payload
   },
   [mutationTypes.SAVE_SCROLL_POSITION](state, { scrollLeft, scrollTop }) {
     state.scrollLeft = scrollLeft
     state.scrollTop = scrollTop
+  },
+  [mutationTypes.LEAVE_DETAIL](state) {
+    state.detail = undefined
   },
 }
 
@@ -73,22 +81,29 @@ const actions = {
       commit(mutationTypes.APPEND_MOVIE_LIST, arr)
     })
   },
-  getDetailInfo({ state, commit }, id) {
-    const item = state.list.find(ele => ele.id === `${id}`)
+  async getDetailInfo({ state, commit }, id) {
+    commit(mutationTypes.GET_MOVIE_DETAIL)
 
-    if (item.html_content) {
-      // 表示已经初始化过
-      commit(mutationTypes.CHANGE_MOVIE_DETAIL, id)
-      return Promise.resolve()
+    const { htmlContent, arrSwiper, title, shareList } = await getMovieContentById(id)
+    let nextId, prevId
+
+    const item = state.list.find(item => item.id === id)
+
+    if (item) {
+      nextId = item.next_id
+      prevId = item.previous_id
     } else {
-      return getMovieContentById(id).then(data => {
-        item.html_content = data.htmlContent
-        item.arr_swiper = data.arrSwiper
-
-        commit(mutationTypes.CHANGE_MOVIE_DETAIL, id)
-        return Promise.resolve()
-      })
+      ({ nextId, prevId } = await getPreviousAndNextId(id))
     }
+
+    commit(mutationTypes.CHANGE_MOVIE_DETAIL, {
+      html_content: htmlContent,
+      arr_swiper: arrSwiper,
+      title: title,
+      shareList,
+      nextId,
+      prevId,
+    })
   }
 }
 

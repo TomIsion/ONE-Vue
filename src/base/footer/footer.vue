@@ -1,10 +1,10 @@
 <template>
-  <transition name="slide">
+  <transition name="global-slide">
     <footer v-show="slide" :style="{zIndex: show ? 101 : 99}" @scroll.stop.prevent="handleScroll">
       <div class="footer-container">
-        <span :class="{ darken: previousId === '' }" @click="goBefore">上一篇</span>
+        <span :class="{ darken: prevId === 0 }" @click="goBefore">上一篇</span>
         <i class="icon-share" @click="handleShareClick"></i>
-        <span :class="{ darken: nextId === '' }" @click="goNext">下一篇</span>
+        <span :class="{ darken: nextId === 0 }" @click="goNext">下一篇</span>
       </div>
       <transition name="fade">
         <div class="hover" v-show="show" @click="handleHoverClick"></div>
@@ -30,76 +30,38 @@
 </template>
 
 <script>
-// import { getFooterInfo } from 'api/common/common'
+import { mapState } from 'vuex'
 
 export default {
   data() {
     return {
-      slide: false,
       show: false,
-      previousId: undefined,
-      nextId: undefined,
-      share: {},
-    }
-  },
-  watch: {
-    $route(newValue) {
-      const path = newValue.path
-      this._changeFooterByPath(path)
     }
   },
   computed: {
     weiboUrl() {
-      return `http://service.weibo.com/share/share.php?url=http%3A%2F%2Fweibo.com%2Fp%2F100404157874&title=${window.encodeURI(`${this.share.content || this.share.summary} ${this.share.title}`)}&pic=${this.share.image}&appkey=1156389752`
+      return `http://service.weibo.com/share/share.php?url=${window.encodeURIComponent(this.shareList.weibo.link)}&title=${window.encodeURIComponent(this.shareList.weibo.title)}&pic=${window.encodeURIComponent(this.shareList.weibo.imgUrl)}&appkey=1156389752`
     },
     kongjianUrl() {
-      return `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?summary=${this.share.content || this.share.summary}&title=${this.share.title}&url=${this.share.url}&pics=${this.share.image}&otype=share`
+      return `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?summary=${window.encodeURIComponent(this.shareList.wx_timeline.desc)}&title=${window.encodeURIComponent(this.shareList.wx_timeline.title)}&url=${window.encodeURIComponent(this.shareList.wx_timeline.link)}&pics=${window.encodeURIComponent(this.shareList.wx_timeline.imgUrl)}&otype=share`
     },
     qqUrl() {
-      return `http://connect.qq.com/widget/shareqq/index.html?desc=&summary=${this.share.content || this.share.summary}&title=${this.share.title}&url=${this.share.url}&pics=${this.share.image}`
+      return `http://connect.qq.com/widget/shareqq/index.html?desc=${window.encodeURIComponent(this.shareList.qq.desc)}&summary=${window.encodeURIComponent(this.shareList.qq.desc)}&title=${window.encodeURIComponent(this.shareList.qq.title)}&url=${window.encodeURIComponent(this.shareList.qq.link)}&pics=${window.encodeURIComponent(this.shareList.qq.imgUrl)}&otype=share`
     },
-  },
-  created() {
-    this._type = undefined
-    this._id = undefined
-  },
-  mounted() {
-    const path = this.$route.path
-
-    this._changeFooterByPath(path)
+    ...mapState('footer', ['nextId', 'prevId', 'type', 'shareList']),
+    ...mapState('footer', {
+      slide: state => state.show,
+    }),
   },
   methods: {
-    _changeFooterByPath(path) {
-      this._type = path.split('/')[1]
-      this._id = path.split('/')[2]
-
-      this.slide = false
-
-      if (this._id) {
-        this._getFooterInfo(this._type, this._id)
-      }
-    },
-    _getFooterInfo(type, id) {
-      // getFooterInfo(type, id).then(res => {
-      //   if (res.query.type === this._type && res.query.id === this._id) {
-      //     this.previousId = res.previousId
-      //     this.nextId = res.nextId
-      //     this.share = res.share || {}
-
-      //     if (res.share) {
-      //       this.slide = true 
-      //     }
-      //   }
-      // })
-    },
     goBefore() {
-      if (this.previousId !== '') {
-        this.$router.push(`/${this._type}/${this.previousId}`)
+      if (this.prevId) {
+        this.$router.push(`/${this.type}/${this.prevId}`)
       }
     },
     goNext() {
-      if (this.nextId !== '') {
-        this.$router.push(`/${this._type}/${this.nextId}`)
+      if (this.nextId) {
+        this.$router.push(`/${this.type}/${this.nextId}`)
       }
     },
     handleShareClick() {
@@ -198,24 +160,51 @@ export default {
           font-size 35px
 
   .fade-enter-active, .fade-leave-active
-    transition all .3s
+    transition all .4s
 
   .fade-enter, .fade-leave-to
     opacity 0
 
-  .slide-enter-active, .slide-leave-active
-    transition all .3s ease
-
   .slide-enter, .slide-leave-to
     transform translate3d(0, 100%, 0)
     opacity 0
-</style>
 
-<style lang="stylus" scoped>
-  .slide-enter-active, .slide-leave-active
-    transition all .2s ease
-
-  .slide-enter, .slide-leave-to
+  // 全局的浮现
+  .global-slide-enter
+  .global-slide-leave-to
     transform translate3d(0, 100%, 0)
+
+  .global-slide-enter-active
+  .global-slide-leave-active
+    transition all .7s
+
+  .global-slide-enter-to
+  .global-slide-leave
+    transform translate3d(0, 0, 0)
+
+  // 分享内容的渐现
+  .fade-enter
+  .fade-leave-to
     opacity 0
+
+  .fade-enter-active
+  .fade-leave-active
+    transition all .3s
+
+  .fade-enter-to
+  .fade-leave
+    opacity 1
+
+  // 分享内容的浮现
+  .slide-enter
+  .slide-leave-to
+    transform translate3d(0, 100%, 0)
+
+  .slide-enter-active
+  .slide-leave-active
+    transition all .4s
+
+  .slide-enter-to
+  .slide-leave
+    transform translate3d(0, 0, 0)
 </style>

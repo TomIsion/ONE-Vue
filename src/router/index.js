@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '../store/index'
+// import store from '../store/index'
 
 Vue.use(Router)
 
@@ -65,23 +65,23 @@ const router = new Router({
   ],
 })
 
-router.beforeResolve((to, from, next) => {
-  // 判断是前往终页
-  const reg = new RegExp(`/(.+)/(\\d+)`)
-  const result = reg.exec(to.path)
+// router.beforeResolve((to, from, next) => {
+//   // 判断是前往终页
+//   const reg = new RegExp(`/(.+)/(\\d+)`)
+//   const result = reg.exec(to.path)
 
-  if (!result) {
-    next()
-  } else {
-    const name = result[1]
-    const id = result[2]
+//   if (!result) {
+//     next()
+//   } else {
+//     const name = result[1]
+//     const id = result[2]
 
-    if (name && id !== undefined) {
-      store.dispatch(`${name}/getDetailInfo`, id).then(() => next())
-    } else {
-      next()
-    }
-  }
-})
+//     if (name && id !== undefined) {
+//       store.dispatch(`${name}/getDetailInfo`, id).then(() => next())
+//     } else {
+//       next()
+//     }
+//   }
+// })
 
 export default router

@@ -1,21 +1,25 @@
 <template>
   <div class="movie-details container">
-    <swiper
-      class="swiper"
-      :imgs="detail.arr_swiper"
-      :title="detail.title"
-    ></swiper>
-    <article
-      class="movie-details-container"
-      ref="article" 
-      v-html="detail.html_content">
-    </article>
+    <loading v-if="!detail"></loading>
+    <template v-if="detail">
+      <swiper
+        class="swiper"
+        :imgs="detail.arr_swiper"
+        :title="detail.title"
+      ></swiper>
+      <article
+        class="movie-details-container"
+        ref="article" 
+        v-html="detail.html_content">
+      </article>
+    </template>
   </div>
 </template>
 
 <script>
 import Swiper from 'base/swiper/swiper'
-import { mapState, mapMutations } from 'vuex'
+import Loading from 'base/loading/loading'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import { find } from 'common/js/dom'
 
 export default {
@@ -24,9 +28,49 @@ export default {
       'detail',
     ])
   },
-  mounted() {
-    this.articleImages = find(this.$refs['article'], '.one-gif')
-    this._bindGif()
+  watch: {
+    '$route.params.id'(newVal) {
+      // 切换上一篇 / 下一篇
+      if (newVal) {
+        this.hideFooter()
+        this.getDetailInfo(newVal)
+      }
+    },
+    detail(newVal) {
+      if (newVal) {
+        // 初始化底部交互
+        this.setFooter({
+          ...this.detail,
+          type: this.type,
+        })
+
+        // 渲染页面
+        this.$nextTick(() => {
+          this.articleImages = find(this.$refs['article'], '.one-gif')
+          this._bindGif()
+        })
+      }
+    },
+  },
+  activated() {
+    const path = this.$route.path
+
+    const reg = new RegExp(`/(.+)/(\\d+)`)
+    const result = reg.exec(path)
+
+    if (result) {
+      const type = result[1]      
+      const id = result[2]
+
+      if (type && id) {
+        this.type = type
+        this.getDetailInfo(id)
+      }
+    }
+  },
+  deactivated() {
+    this.leaveDetail()
+    this.hideFooter()
   },
   beforeDestroy() {
     this._removeGif()
@@ -53,10 +97,15 @@ export default {
     ...mapMutations('footer', {
       setFooter: 'SET_FOOTER',
       hideFooter: 'HIDE_FOOTER',
-    })
+    }),
+    ...mapMutations('movie', {
+      leaveDetail: 'LEAVE_DETAIL',
+    }),
+    ...mapActions('movie', ['getDetailInfo']),
   },
   components: {
     Swiper,
+    Loading,
   }
 }
 </script>
