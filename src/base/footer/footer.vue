@@ -2,9 +2,9 @@
   <transition name="global-slide">
     <footer v-show="slide" :style="{zIndex: show ? 101 : 99}" @scroll.stop.prevent="handleScroll">
       <div class="footer-container">
-        <span :class="{ darken: prevId === 0 }" @click="goBefore">上一篇</span>
+        <span :class="{ darken: nextId === 0 }" @click="goNext">上一篇</span>
         <i class="icon-share" @click="handleShareClick"></i>
-        <span :class="{ darken: nextId === 0 }" @click="goNext">下一篇</span>
+        <span :class="{ darken: prevId === 0 }" @click="goBefore">下一篇</span>
       </div>
       <transition name="fade">
         <div class="hover" v-show="show" @click="handleHoverClick"></div>
@@ -40,13 +40,13 @@ export default {
   },
   computed: {
     weiboUrl() {
-      return `http://service.weibo.com/share/share.php?url=${window.encodeURIComponent(this.shareList.weibo.link)}&title=${window.encodeURIComponent(this.shareList.weibo.title)}&pic=${window.encodeURIComponent(this.shareList.weibo.imgUrl)}&appkey=1156389752`
+      return this.shareList.weibo && `http://service.weibo.com/share/share.php?url=${window.encodeURIComponent(this.shareList.weibo.link)}&title=${window.encodeURIComponent(this.shareList.weibo.title)}&pic=${window.encodeURIComponent(this.shareList.weibo.imgUrl)}&appkey=1156389752`
     },
     kongjianUrl() {
-      return `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?summary=${window.encodeURIComponent(this.shareList.wx_timeline.desc)}&title=${window.encodeURIComponent(this.shareList.wx_timeline.title)}&url=${window.encodeURIComponent(this.shareList.wx_timeline.link)}&pics=${window.encodeURIComponent(this.shareList.wx_timeline.imgUrl)}&otype=share`
+      return this.shareList.wx_timeline && `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?summary=${window.encodeURIComponent(this.shareList.wx_timeline.desc)}&title=${window.encodeURIComponent(this.shareList.wx_timeline.title)}&url=${window.encodeURIComponent(this.shareList.wx_timeline.link)}&pics=${window.encodeURIComponent(this.shareList.wx_timeline.imgUrl)}&otype=share`
     },
     qqUrl() {
-      return `http://connect.qq.com/widget/shareqq/index.html?desc=${window.encodeURIComponent(this.shareList.qq.desc)}&summary=${window.encodeURIComponent(this.shareList.qq.desc)}&title=${window.encodeURIComponent(this.shareList.qq.title)}&url=${window.encodeURIComponent(this.shareList.qq.link)}&pics=${window.encodeURIComponent(this.shareList.qq.imgUrl)}&otype=share`
+      return this.shareList.qq && `http://connect.qq.com/widget/shareqq/index.html?desc=${window.encodeURIComponent(this.shareList.qq.desc)}&summary=${window.encodeURIComponent(this.shareList.qq.desc)}&title=${window.encodeURIComponent(this.shareList.qq.title)}&url=${window.encodeURIComponent(this.shareList.qq.link)}&pics=${window.encodeURIComponent(this.shareList.qq.imgUrl)}&otype=share`
     },
     ...mapState('footer', ['nextId', 'prevId', 'type', 'shareList']),
     ...mapState('footer', {
@@ -56,12 +56,12 @@ export default {
   methods: {
     goBefore() {
       if (this.prevId) {
-        this.$router.push(`/${this.type}/${this.prevId}`)
+        this.$router.replace(`/${this.type}/${this.prevId}`)
       }
     },
     goNext() {
       if (this.nextId) {
-        this.$router.push(`/${this.type}/${this.nextId}`)
+        this.$router.replace(`/${this.type}/${this.nextId}`)
       }
     },
     handleShareClick() {
@@ -71,7 +71,6 @@ export default {
       this.show = false
     },
     handleScroll() {
-      console.log(111)
     },
   },
 }

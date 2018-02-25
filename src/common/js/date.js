@@ -1,4 +1,4 @@
-const reg = /YYY?Y?|MM|DD?|hh?|mm?|ss?|./g
+const reg = /YYY?Y?|MM?|DD?|hh?|mm?|ss?|./g
 
 const judgeDate = d => !((Object.prototype.toString.call(d) === '[object Date]') && isNaN(d.getTime()))
 

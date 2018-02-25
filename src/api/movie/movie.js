@@ -5,7 +5,7 @@ const detailUrl = 'http://v3.wufazhuce.com:8000/api/movie/detail/'
 const detailStoryUrl = 'http://v3.wufazhuce.com:8000/api/movie/'
 const contentUrl = 'http://v3.wufazhuce.com:8000/api/movie/htmlcontent/'
 
-export function getMovieList(id = 0) {
+function getMovieList(id = 0) {
   return axios.get(`${listUrl}${id}`)
     .then(res => res.data)
     .then(res => {
@@ -46,8 +46,8 @@ function getMovieListDetailById(id) {
   })
 }
 
-// 终页获取详细信息异步
-export function getMovieContentById(id) {
+// 获取终页呈现内容异步
+function getMovieContentById(id) {
   return axios.get(`${contentUrl}${id}`, {
     params: {
       // 否则没有图片
@@ -82,7 +82,7 @@ export function getMovieContentById(id) {
 }
 
 // 获取前一篇后一篇Id
-export function getPreviousAndNextId(id) {
+function getPreviousAndNextId(id) {
   return axios.get(`${detailUrl}${id}`)
     .then(res => res.data)
     .then(data => (data.res === 0 ? data.data : {}))
@@ -90,4 +90,19 @@ export function getPreviousAndNextId(id) {
       nextId: data.next_id,
       prevId: data.previous_id,
     }))
+}
+
+function getMovieDetail(id) {
+  return Promise.all([
+    getMovieContentById(id),
+    getPreviousAndNextId(id),
+  ]).then(([objContent, objFooter]) => ({
+    ...objContent,
+    ...objFooter,
+  })).catch(() => {})
+}
+
+export default {
+  getList: getMovieList,
+  getDetail: getMovieDetail,
 }

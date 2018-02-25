@@ -67,41 +67,15 @@ apiRoutes.get('/api/footer', function (request, response) {
         console.log(error)
       } else {
         if (type === 'one') {
-          const regPreviousId = /(?:dataSource\.previousPageUrl=["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
-          const regNextId = /(?:dataSource\.nextPageUrl=["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
-          const regBasicInfo = /(?:dataSource\.url=['"]{1})([^'"]*)[\s\S]*(?:dataSource\.title=['"]{1})([^'"]*)[\s\S]*(?:dataSource\.image_url=['"]{1})([^'"]*)/gm
-          const regContent = /(?:dataSource\.content=['"]{1})([^'"]*)/gm
-          const regSummary = /(?:dataSource\.summary=['"]{1})([^'"]*)/gm
-
-          const objPreviousId = regPreviousId.exec(res.body)
-          const objNextId = regNextId.exec(res.body)
-          const objBasicInfo = regBasicInfo.exec(res.body)
-          const objContent = regContent.exec(res.body)
-          const objSummary = regSummary.exec(res.body)
-
-          response.json({
-            query: params,
-            previousId: objPreviousId && objPreviousId[1],
-            nextId: objNextId && objNextId[1],
-            share: {
-              url: objBasicInfo && objBasicInfo[1],
-              title: objBasicInfo && objBasicInfo[2],
-              content: objContent && objContent[1],
-              summary: objSummary && objSummary[1],
-              image: objBasicInfo && objBasicInfo[3],
-            },
-          })
-        } else if (type === 'movie') {
-          const regPreviousId = /(?:dataSource\.previousPageUrl = ["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
-          const regNextId = /(?:dataSource\.nextPageUrl = ["']{1}[^;\d]*)(\d*)(?=["']{1})/gm
+          const regPreviousId = /dataSource\.previousPageUrl=["']\D*?(\d*)["']/gm
+          const regNextId = /dataSource\.nextPageUrl=["']\D*?(\d*)["']/gm
 
           const objPreviousId = regPreviousId.exec(res.body)
           const objNextId = regNextId.exec(res.body)
 
           response.json({
-            query: params,
-            previousId: objPreviousId && objPreviousId[1],
-            nextId: objNextId && objNextId[1],
+            prevId: objPreviousId[1] || 0,
+            nextId: objNextId[1] || 0,
           })
         }
       }

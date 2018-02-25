@@ -1,45 +1,56 @@
 <template>
-  <div class="container">
+  <div
+    class="container"
+    ref="scrollContainer">
     <ul ref="list">
-      <li v-for="item in list" :key="item.id" @click="handleClickItem(item.id)">
-        <p class="time">{{item.date}}</p>
-        <p class="volume">{{item.title}}</p>
-        <img v-lazy="item.img_url" :alt="item.picture_author">
-        <p class="author" v-html="item.picture_author"></p>
-        <h4 v-html="item.content"></h4>
+      <li
+        v-for="item in list"
+        :key="item.hpcontent_id"
+        @click="handleClickItem(item.hpcontent_id)">
+        <p class="time">
+          {{dateFormat(item.date, 'YYYY / MM / DD')}}
+        </p>
+        <p class="volume">{{item.hp_title}}</p>
+        <img
+          v-lazy="item.hp_img_original_url"
+          :alt="item.hp_author">
+        <p class="author" v-html="item.hp_author"></p>
+        <h4 v-html="removeAuthor(item.hp_content)"></h4>
         <p class="source" v-html="item.text_authors"></p>
       </li>
     </ul>
-    <loading v-show="singleInAjax"></loading>
+    <loading v-show="loading"></loading>
   </div>
 </template>
 
 <script>
-import { getOneListByPageIndex } from 'api/one/one'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import mixinScrollLoad from 'base/mixins/scroll-load'
+import mixinKeepScroll from 'base/mixins/keep-scroll'
+import { dateFormat } from 'common/js/date'
 
 export default {
-  mixins: [mixinScrollLoad],
-  name: 'one',
-  data() {
-    return {
-      list: [],
-      singleInAjax: true,
+  name: 'one',  
+  mixins: [mixinScrollLoad, mixinKeepScroll],
+  computed: {
+    ...mapState('one', ['loading', 'list', 'scrollTop', 'scrollLeft']),
+  },
+  created() {
+    this.removeAuthor = val => val.replace(/[from|by].+?$/g, '')
+    this.dateFormat = dateFormat
+    
+    if (this.list.length === 0) {
+      this._getList()
     }
   },
   methods: {
-    _getList({ index = 0 }) {
-      this.singleInAjax = true
-
-      this._getListAjax(index)
-        .then(res => {
-          if (res.res === 0) {
-            this.list.push(...res.data)
-            this.singleInAjax = false
-          }
-        })
+    _getList() {
+      this.getListInfo()
     },
-    _getListAjax: getOneListByPageIndex,
+    ...mapActions('one', ['getListInfo']),
+    ...mapMutations('one', {
+      _savePosition: 'SAVE_SCROLL_POSITION',
+    }),
   },
 }
 </script>

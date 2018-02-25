@@ -4,13 +4,13 @@
     <template v-if="detail">
       <swiper
         class="swiper"
-        :imgs="detail.arr_swiper"
+        :imgs="detail.arrSwiper"
         :title="detail.title"
       ></swiper>
       <article
         class="movie-details-container"
         ref="article" 
-        v-html="detail.html_content">
+        v-html="detail.htmlContent">
       </article>
     </template>
   </div>
@@ -24,18 +24,9 @@ import { find } from 'common/js/dom'
 
 export default {
   computed: {
-    ...mapState('movie', [
-      'detail',
-    ])
+    ...mapState('movie', ['detail']),
   },
   watch: {
-    '$route.params.id'(newVal) {
-      // 切换上一篇 / 下一篇
-      if (newVal) {
-        this.hideFooter()
-        this.getDetailInfo(newVal)
-      }
-    },
     detail(newVal) {
       if (newVal) {
         // 初始化底部交互
@@ -68,12 +59,16 @@ export default {
       }
     }
   },
+  beforeRouteUpdate(to, from, next) {
+    // 切换上一篇、下一篇
+    this.hideFooter()
+    this.getDetailInfo(to.params.id)
+    next()
+  },
   deactivated() {
     this.leaveDetail()
     this.hideFooter()
-  },
-  beforeDestroy() {
-    this._removeGif()
+    this._removeGif()    
   },
   methods: {
     _changeSrc(event) {
@@ -99,7 +94,7 @@ export default {
       hideFooter: 'HIDE_FOOTER',
     }),
     ...mapMutations('movie', {
-      leaveDetail: 'LEAVE_DETAIL',
+      leaveDetail: 'RESET_DETAIL',
     }),
     ...mapActions('movie', ['getDetailInfo']),
   },
@@ -115,6 +110,9 @@ export default {
     height 210px
 
   article.movie-details-container
+    padding-bottom 50px
+
+
     .one-title-box
       margin 30px 20px 0
       line-height 40px
@@ -162,4 +160,3 @@ export default {
       margin 20px
       font-size 12px
 </style>
-

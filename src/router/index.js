@@ -20,12 +20,12 @@ const router = new Router({
     {
       path: '/one/:id',
       name: 'one-detail',
-      component: () => import('components/one/one'),
+      component: () => import('components/one-detail/one-detail'),
     },
     {
       path: '/one',
       name: 'one',
-      component: () => import('components/one-detail/one-detail'),
+      component: () => import('components/one/one'),
     },
     {
       path: '/article',

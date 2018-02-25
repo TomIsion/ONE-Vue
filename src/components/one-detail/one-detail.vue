@@ -1,71 +1,90 @@
 <template>
   <div class="one-details container">
-    <div class="details-container">
-      <img :src="detailInfo.img" alt="">
+    <div class="details-container" v-if="detail">
+      <img :src="detail.img_url" alt="">
       <div class="description clear">
-        <span>{{ detailInfo.volume }}</span>
-        <span v-html="detailInfo.anthor"></span>
+        <span>{{ detail.volume + detail.item_id }}</span>
+        <span v-html="detail.title + ' | ' + detail.pic_info"></span>
       </div>
       <div class="time">
-        <p class="day">{{ detailInfo.day }}</p>
-        <p class="month">{{ detailInfo.month }}</p>
+        <p class="day">{{ dateFormat(detail.post_date, 'DD') }}</p>
+        <p class="month">{{ detail.post_date | formatTime }}</p>
         <div class="sep-line"></div>
       </div>
-      <div class="text" v-html="detailInfo.text"></div>
+      <div class="text" v-html="detail.forward"></div>
       <download></download>
     </div>
-    <loading v-show="singleInAjax"></loading>
+    <loading v-if="!detail"></loading>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions, mapMutations } from 'vuex'
 import Download from 'base/download/download'
 import Loading from 'base/loading/loading'
-
 import { dateFormat } from 'common/js/date'
-import { getOneDetailById } from 'api/one/one'
 
 export default {
-  data() {
-    return {
-      detailInfo: {},
-      singleInAjax: true,
-    }
+  computed: {
+    ...mapState('one', ['detail']),
   },
   watch: {
-    $route(newRoute) {
-      this._getOneDetailById(newRoute.params.id)
+    detail(newVal) {
+      if (newVal) {
+        // 初始化底部交互
+        this.setFooter({
+          ...this.detail,
+          shareList: this.detail.share_list,
+          type: this.type,
+        })
+      }
+    },
+  },
+  created() {
+    this.dateFormat = dateFormat
+  },
+  activated() {
+    const path = this.$route.path
+
+    const reg = new RegExp(`/(.+)/(\\d+)`)
+    const result = reg.exec(path)
+
+    if (result) {
+      const type = result[1]      
+      const id = result[2]
+
+      if (type && id) {
+        this.type = type
+        this.getDetailInfo(id)
+      }
     }
   },
-  mounted() {
-    this._getOneDetailById(this.$route.params.id)
+  beforeRouteUpdate(to, from, next) {
+    // 切换上一篇、下一篇
+    this.hideFooter()
+    this.getDetailInfo(to.params.id)
+    next()
   },
-  methods: {
-    _getOneDetailById(id) {
+  deactivated() {
+    this.leaveDetail()
+    this.hideFooter()
+  },
+  filters: {
+    formatTime(val) {
       const month2Eng = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-      this.singleInAjax = true
-
-      getOneDetailById(id)
-        .then(res => {
-          if (res.res === 0) {
-            const data = res.data
-
-            this.detailInfo = {
-              img: data.img_url,
-              volume: data.volume,
-              anthor: `${data.title} | ${data.pic_info}`,
-              day: dateFormat(data.post_date, 'D'),
-              month: `${month2Eng[dateFormat(data.post_date, 'M')]}. ${dateFormat(data.post_date, 'YYYY')}`,
-              text: data.forward,
-            }
-
-            this.singleInAjax = false
-          } else {
-          }
-        })
-        .catch(err => console.log(err))
-    }
+      return `${month2Eng[dateFormat(val, 'M')]}. ${dateFormat(val, 'YYYY')}`
+    },
+  },
+  methods: {
+    ...mapActions('one', ['getDetailInfo']),
+    ...mapMutations('one', {
+      leaveDetail: 'RESET_DETAIL',
+    }),
+    ...mapMutations('footer', {
+      setFooter: 'SET_FOOTER',
+      hideFooter: 'HIDE_FOOTER',
+    })
   },
   components: {
     Download,
@@ -125,5 +144,3 @@ export default {
       line-height 26px
       color #000000
 </style>
-
-
