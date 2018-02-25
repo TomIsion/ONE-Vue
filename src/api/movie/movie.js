@@ -87,8 +87,8 @@ function getPreviousAndNextId(id) {
     .then(res => res.data)
     .then(data => (data.res === 0 ? data.data : {}))
     .then(data => ({
-      nextId: data.next_id,
-      prevId: data.previous_id,
+      nextId: data.previous_id,
+      prevId: data.next_id,
     }))
 }
 

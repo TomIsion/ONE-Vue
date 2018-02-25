@@ -2,9 +2,9 @@
   <transition name="global-slide">
     <footer v-show="slide" :style="{zIndex: show ? 101 : 99}" @scroll.stop.prevent="handleScroll">
       <div class="footer-container">
-        <span :class="{ darken: nextId === 0 }" @click="goNext">上一篇</span>
+        <span :class="{ darken: prevId === 0 }" @click="goBefore">上一篇</span>
         <i class="icon-share" @click="handleShareClick"></i>
-        <span :class="{ darken: prevId === 0 }" @click="goBefore">下一篇</span>
+        <span :class="{ darken: nextId === 0 }" @click="goNext">下一篇</span>
       </div>
       <transition name="fade">
         <div class="hover" v-show="show" @click="handleHoverClick"></div>

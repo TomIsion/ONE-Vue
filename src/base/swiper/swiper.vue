@@ -25,7 +25,12 @@ import { addClass, removeClass } from 'common/js/dom'
 
 export default {
   props: {
-    imgs: Array,
+    imgs: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
     title: {
       type: String,
       default: '',

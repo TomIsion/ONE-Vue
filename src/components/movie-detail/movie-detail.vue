@@ -68,7 +68,6 @@ export default {
   deactivated() {
     this.leaveDetail()
     this.hideFooter()
-    this._removeGif()    
   },
   methods: {
     _changeSrc(event) {
@@ -80,14 +79,10 @@ export default {
       }
     },
     _bindGif() {
-      Array.prototype.forEach.call(this.articleImages, ele => {
-        ele.addEventListener('click', this._changeSrc)
-      })
-    },
-    _removeGif() {
-      Array.prototype.forEach.call(this.articleImages, ele => {
-        ele.removeAddEventListener('click', this._changeSrc)
-      })
+      Array.prototype.forEach.call(
+        this.articleImages,
+        ele => ele.addEventListener('click', this._changeSrc)
+      )
     },
     ...mapMutations('footer', {
       setFooter: 'SET_FOOTER',
