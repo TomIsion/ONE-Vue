@@ -39,8 +39,8 @@ export default {
         path: '/one',
       },
       {
-        text: '阅读',
-        path: '/article',
+        text: '问答',
+        path: '/question',
       },
       {
         text: '音乐',

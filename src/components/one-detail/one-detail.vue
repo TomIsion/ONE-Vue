@@ -20,6 +20,7 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
+import store from 'store/index'
 import Download from 'base/download/download'
 import Loading from 'base/loading/loading'
 import { dateFormat } from 'common/js/date'
@@ -58,6 +59,12 @@ export default {
         this.getDetailInfo(id)
       }
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    // 从列表来终页时 可以预先加载数据
+    store.dispatch('one/getDetailInfo', to.params.id)
+
+    next()
   },
   beforeRouteUpdate(to, from, next) {
     // 切换上一篇、下一篇

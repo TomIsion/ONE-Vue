@@ -33,6 +33,11 @@ const router = new Router({
       component: () => import('components/article/article'),
     },
     {
+      path: '/question',
+      name: 'question',
+      component: () => import('components/question/question'),
+    },
+    {
       path: '/music/:id',
       name: 'music-detail',
       component: () => import('components/music-detail/music-detail'),

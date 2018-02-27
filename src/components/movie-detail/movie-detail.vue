@@ -20,6 +20,7 @@
 import Swiper from 'base/swiper/swiper'
 import Loading from 'base/loading/loading'
 import { mapState, mapMutations, mapActions } from 'vuex'
+import store from 'store/index'
 import { find } from 'common/js/dom'
 
 export default {
@@ -58,6 +59,11 @@ export default {
         this.getDetailInfo(id)
       }
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    store.dispatch('movie/getDetailInfo', to.params.id)
+
+    next()
   },
   beforeRouteUpdate(to, from, next) {
     // 切换上一篇、下一篇
