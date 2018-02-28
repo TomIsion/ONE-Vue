@@ -1,39 +1,26 @@
 # Vue-ONE
 
-m.wufazhuce.com
+原项目：[m.wufazhuce.com](http://m.wufazhuce.com/)
 
-## Build Setup
+在线地址：暂无
+
+## 本地启动
 
 ``` bash
-# install dependencies
+# 安装依赖
 npm install
 
-# serve with hot reload at localhost:8080
+# 热更新启动于 localhost:8080
 npm run dev
 
-# build for production with minification
+# 生产环境构建
 npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
 ```
 
 ## API
 
-> 参考资料 [ONE-API](https://github.com/sxyseo/ONE-API)
+> 参考资料 [ONE-API](https://github.com/zuijiaoluo/ONE-API)
 
-> [虾米音乐播放](https://github.com/naoyeye/xiamiRunLeanCloud)
+主要的数据来源都是基于上面的项目 在此特别感谢 [@lipeiwei-szu](https://github.com/lipeiwei-szu) 的整理分享
 
-### 字段常量
-
-#### channel_name
-
-one 首页
-
-### 列表请求示例
-
-### 首页请求地址
-
-> 来源 iOS App
-
-> http://v3.wufazhuce.com:8000/api/channel/one/0/%E8%8B%8F%E5%B7%9E%E5%B8%82?platform=ios&sign=1064b4bf4e7b3e6ce72c961363ae46ac&user_id=&uuid=1B313E28-B1B0-4049-A681-36F4DCDECBE3&version=v4.3.2
+终页的底部数据有些是使用爬虫获取的 API中无法获取到相关的信息 具体实现参考 `build/dev-own-routes.js`
