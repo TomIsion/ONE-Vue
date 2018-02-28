@@ -4,8 +4,7 @@ let month = new Date().getMonth() + 1
 let year = new Date().getFullYear()
 
 const listUrl = 'http://v3.wufazhuce.com:8000/api/question/bymonth/'
-// const datailUrl = ''
-// const footerUrl = '/api/footer'
+const detailUrl = 'http://v3.wufazhuce.com:8000/api/question/'
 
 async function getQuestionList() {
   const data = await axios.get(`${listUrl}${year}-${month}`)
@@ -23,9 +22,22 @@ async function getQuestionList() {
   return data
 }
 
-// async function getQuestionDetail(id) {
-// }
+async function getQuestionDetail(id) {
+  const data = await axios.get(`${detailUrl}${id}`)
+    .then(res => res.data)
+    .then(info => info.res === 0 ? info.data : {})
+    .then(data => ({
+      ...data,
+      nextId: data.previous_id,
+      prevId: data.next_id,
+      shareList: data.share_list,
+    }))
+    .catch(() => {})
+
+  return data
+}
 
 export default {
   getList: getQuestionList,
+  getDetail: getQuestionDetail,
 }
