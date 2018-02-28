@@ -1,26 +1,61 @@
 <template>
-  <div class="container" ref="list">
-    <dl v-for="item in list" :key="item.id" @click="handleClickItem(item.id)">
-      <dt>
-        <p class="sub">- 音乐 -</p>
-        <h2 v-html="item.story_title"></h2>
-        <p class="author" v-html="`文 / ${item.author_list[0].user_name}`"></p>
-      </dt>
-      <dd>
-        <div class="cover">
-          <div>
-            <i v-if="item.music_id.indexOf('wufazhuce') === -1" class="icon-xiami"></i>
-            <img class="music-cover" src="../../assets/images/music-list-placeholder.png" v-lazy="item.cover" alt="">
-            <img class="circle" src="../../assets/images/circle-btn.png" alt="">
+  <div
+    class="container"
+    ref="scrollContainer">
+    <div ref="list">
+      <dl
+        v-for="item in list"
+        :key="item.id"
+        @click="handleClickItem(item.id)">
+        <dt>
+          <p class="sub">- 音乐 -</p>
+          <h2 v-html="item.story_title"></h2>
+          <p class="author" v-html="`文 / ${item.author_list[0].user_name}`"></p>
+        </dt>
+        <dd>
+          <div class="cover">
+            <div>
+              <i v-if="item.music_id.indexOf('wufazhuce') === -1" class="icon-xiami"></i>
+              <img class="music-cover" src="../../assets/images/music-list-placeholder.png" v-lazy="item.cover" alt="">
+              <img class="circle" src="../../assets/images/circle-btn.png" alt="">
+            </div>
           </div>
-        </div>
-        <p class="music" v-html="item.title"></p>
-        <p class="sub-title" v-html="`—— ${item.album}`"></p>
-      </dd>
-    </dl>
-    <loading v-show="singleInAjax"></loading>
+          <p class="music" v-html="item.title"></p>
+          <p class="sub-title" v-html="`—— ${item.album}`"></p>
+        </dd>
+      </dl>
+    </div>
+    <loading v-show="loading"></loading>
   </div>
 </template>
+
+<script>
+import { mapState, mapActions, mapMutations } from 'vuex'
+import mixinScrollLoad from 'base/mixins/scroll-load'
+import mixinKeepScroll from 'base/mixins/keep-scroll'
+
+export default {
+  name: 'music',
+  mixins: [mixinScrollLoad, mixinKeepScroll],
+  computed: {
+    ...mapState('music', ['loading', 'list', 'scrollTop', 'scrollLeft']),
+  },
+  created() {
+    if (this.list.length === 0) {
+      this._getList()
+    }
+  },
+  methods: {
+    _getList() {
+      this.getListInfo()
+    },
+    ...mapActions('music', ['getListInfo']),
+    ...mapMutations('music', {
+      _savePosition: 'SAVE_SCROLL_POSITION',
+    }),
+  }
+}
+</script>
 
 <style lang="stylus" scoped>
   @import '~common/css/func.stylus'
@@ -117,28 +152,3 @@
         margin 0 20px
         padding 21px 0 30px
 </style>
-
-<script>
-import { mapState, mapActions } from 'vuex'
-import mixinScrollLoad from 'base/mixins/scroll-load'
-
-export default {
-  mixins: [mixinScrollLoad],
-  name: 'music',
-  computed: {
-    ...mapState({
-      singleInAjax: state => state.music.loading,
-      list: state => state.music.info,
-      singleFinished: state => state.music.finished,
-    }),
-  },
-  methods: {
-    _getList(singleInit) {
-      this._getMusic(singleInit)
-    },
-    ...mapActions({
-      _getMusic: 'getMusicInfo',
-    })
-  }
-}
-</script>

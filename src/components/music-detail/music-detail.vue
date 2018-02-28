@@ -1,23 +1,93 @@
 <template>
   <div class="music-detail-container">
-    <div class="header">
-      <div>
-        <div class="place-holder">
-          <img v-show="!singleInAjax" :src="music && music.cover" alt="">
+    <article v-if="music">
+      <div class="header">
+        <div>
+          <div class="place-holder">
+            <img :src="music.cover" alt="">
+          </div>
+          <div class="play button"></div>
         </div>
-        <div class="play button"></div>
       </div>
-    </div>
-    <div class="article">
-      <p class="music-info" v-html="music && `${music.title} · ${music.author.user_name}&nbsp;&nbsp;|&nbsp;&nbsp;${music.album}`"></p>
-      <i class="icon-music-words"></i>
-      <h1 v-html="music && music.story_title"></h1>
-      <p class="author" v-html="music && `文 / ${music.author_list[0].user_name}`"></p>
-      <div class="content" v-html="music && music.story"></div>
-    </div>
-    <loading v-show="singleInAjax"></loading>
+      <div class="article">
+        <p class="music-info" v-html="`${music.title} · ${music.author.user_name}&nbsp;&nbsp;|&nbsp;&nbsp;${music.album}`"></p>
+        <i class="icon-music-words"></i>
+        <h1 v-html="music.story_title"></h1>
+        <p class="author" v-html="`文 / ${music.author_list[0].user_name}`"></p>
+        <div class="content" v-html="music.story"></div>
+      </div>
+    </article>
+    <loading v-if="!music"></loading>
   </div>
 </template>
+
+<script>
+import { mapState, mapActions, mapMutations } from 'vuex'
+import Loading from 'base/loading/loading'
+import store from 'store/index'
+
+export default {
+  computed: {
+    ...mapState('music', {
+      music: state => state.detail,
+    }),
+  },
+  watch: {
+    music(newVal) {
+      if (newVal) {
+        this.setFooter({
+          ...this.music,
+          type: this.type,
+        })
+      }
+    },
+  },
+  beforeRouteEnter(to, from, next) {
+    store.dispatch('music/getDetailInfo', to.params.id)
+
+    next()
+  },
+  activated() {
+    const path = this.$route.path
+
+    const reg = new RegExp(`/(.+)/(\\d+)`)
+    const result = reg.exec(path)
+
+    if (result) {
+      const type = result[1]      
+      const id = result[2]
+
+      if (type && id) {
+        this.type = type
+        this.getDetailInfo(id)
+      }
+    }
+  },
+  deactivated() {
+    this.leaveDetail()
+    this.hideFooter()
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.hideFooter()
+    this.getDetailInfo(to.params.id)
+
+    next()
+  },
+  methods: {
+    ...mapMutations('footer', {
+      setFooter: 'SET_FOOTER',
+      hideFooter: 'HIDE_FOOTER',
+    }),
+    ...mapMutations('music', {
+      leaveDetail: 'RESET_DETAIL',
+    }),
+    ...mapActions('music', ['getDetailInfo']),
+  },
+  components: {
+    Loading,
+  },
+}
+</script>
 
 <style lang="stylus" scoped>
   .music-detail-container
@@ -119,53 +189,3 @@
         font-size 14px
         margin 5px 0
 </style>
-
-<script>
-import { mapState, mapActions } from 'vuex'
-import Loading from 'base/loading/loading'
-
-export default {
-  data() {
-    return {
-      singleInAjax: true,
-    }
-  },
-  computed: {
-    ...mapState({
-      music: state => state.music.detail,
-    })
-  },
-  watch: {
-    music(newValue) {
-      if (newValue === undefined) {
-        this.singleInAjax = true
-      } else {
-        this.singleInAjax = false
-      }
-    },
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm._getMusicDetail({
-        id: to.params.id,
-      })
-    })
-  },
-  beforeRouteUpdate(to, from, next) {
-    // 下部导航切换效果
-    this._getMusicDetail({
-      id: to.params.id,
-    })
-
-    next()
-  },
-  methods: {
-    ...mapActions({
-      _getMusicDetail: 'getMusicDetail',
-    })
-  },
-  components: {
-    Loading,
-  },
-}
-</script>

@@ -9,47 +9,43 @@ let year = date.getFullYear()
 let month = date.getMonth() + 1
 
 // 获取音乐列表
-const getMusicList = () => axios.get(
-  `http://v3.wufazhuce.com:8000/api/music/bymonth/${year}-${month}`
-)
-.then(res => res.data)
-.then(data => data.res === 0 ? data.data : undefined)
-.then(arr => {
-  month--
-
-  if (month === 0) {
-    month = 12
-    year = year - 1
-  }
+async function getMusicList () {
+  const arr = await axios.get(
+    `http://v3.wufazhuce.com:8000/api/music/bymonth/${year}-${month}`
+  ).then(res => res.data)
+    .then(data => data.res === 0 ? data.data : undefined)
+    .then(arr => {
+      month--
+    
+      if (month === 0) {
+        month = 12
+        year = year - 1
+      }
+    
+      return arr
+    })
+    .catch(() => [])
 
   return arr
-})
-
-// 获取音乐详细信息异步
-const getMusicDetail = item => axios.get(
-  `http://v3.wufazhuce.com:8000/api/music/detail/${item.id}`
-)
-.then(res => res.data)
-.then(data => data.res === 0 ? data.data : undefined)
-.then(data => {
-  if (data === undefined) {
-    return undefined
-  } else {
-    const objMusicDetail = {
-      listInfo: item,
-      ...data,
-    }
-
-    return objMusicDetail
-  }
-})
-
-export function getMusicListByStep() {
-  if (year === 2015 && month === 12) {
-    return Promise.resolve(undefined)
-  } else {
-    return getMusicList()
-  }
 }
 
-export { getMusicDetail }
+// 获取音乐详细信息异步
+async function getMusicDetail (id) {
+  const data = await axios.get(`http://v3.wufazhuce.com:8000/api/music/detail/${id}`)
+    .then(res => res.data)
+    .then(info => info.res === 0 ? info.data : {})
+    .then(data => ({
+      ...data,
+      nextId: data.previous_id,
+      prevId: data.next_id,
+      shareList: data.share_list,
+    }))
+    .catch(() => {})
+
+  return data
+}
+
+export default {
+  getList: getMusicList,
+  getDetail: getMusicDetail,
+}
